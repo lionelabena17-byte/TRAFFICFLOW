@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TrafficFlow - Carte</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="leaflet.css">
+    <style>
+        #map { height: calc(100vh - 65px - 200px); width: 100%; }
+        .map-panel { display: flex; height: calc(100vh - 65px); }
+        .map-sidebar { width: 300px; background: #fff; border-right: 1px solid #E0E0E0; padding: 24px; overflow-y: auto; flex-shrink: 0; }
+        .map-container { flex: 1; position: relative; }
+        .map-legend { position: absolute; bottom: 20px; left: 20px; background: #fff; border: 0.5px solid #E0E0E0; border-radius: 8px; padding: 14px; z-index: 1000; }
+        .legend-item { display: flex; align-items: center; gap: 8px; font-size: 12px; margin-bottom: 6px; }
+        .legend-dot { width: 12px; height: 12px; border-radius: 50%; flex-shrink: 0; }
+        .map-info-bar { background: #1A0A00; padding: 12px 24px; display: flex; gap: 24px; align-items: center; }
+        .map-info-item { font-size: 12px; color: #C9A96E; }
+        .map-info-item span { color: #fff; font-weight: 700; margin-left: 6px; }
+        .route-result { background: #F7F7F7; border-radius: 4px; padding: 14px; margin-top: 16px; display: none; border: 0.5px solid #E0E0E0; }
+        .route-result.visible { display: block; }
+        .route-stat { display: flex; justify-content: space-between; font-size: 13px; padding: 6px 0; border-bottom: 0.5px solid #E0E0E0; }
+        .route-stat:last-child { border-bottom: none; }
+        .route-stat-val { font-weight: 700; color: #1A0A00; }
+        @media(max-width: 768px) {
+            .map-panel { flex-direction: column; }
+            .map-sidebar { width: 100%; height: auto; border-right: none; border-bottom: 1px solid #E0E0E0; }
+            #map { height: 50vh; }
+        }
+    </style>
+</head>
+<body>
+
+
+<nav class="navbar">
+    <div class="nav-logo">TRAFFICFLOW</div>
+    <div class="nav-links">
+        <a href="index.html" class="nav-link active">Accueil</a>
+        <a href="map.html" class="nav-link">Carte</a>
+        <a href="dashboard.html" class="nav-link">Dashboard</a>
+        <a href="connexion.html" class="nav-link">Connexion</a>
+        <a href="communauté.html" class="nav-link">Communaute</a>
+    </div>
+</nav>
+
+<!-- BARRE INFO TRAFIC -->
+<div class="map-info-bar">
+    <div class="map-info-item">Akwa → Bonanjo <span style="color:#1A6640;">Fluide</span></div>
+    <div class="map-info-item">Ndokotti <span style="color:#8B6400;">Modéré</span></div>
+    <div class="map-info-item">Deido <span style="color:#A00000;">Bloqué</span></div>
+    <div class="map-info-item">Mis à jour <span>il y a 2 min</span></div>
+</div>
+
+<div class="map-panel">
+
+    <!-- SIDEBAR ITINÉRAIRE -->
+    <aside class="map-sidebar">
+        <div style="font-size:11px; font-weight:700; color:#C9A96E; letter-spacing:2px; margin-bottom:20px;">ITINÉRAIRE</div>
+
+        <div class="filter-group">
+            <label class="filter-label">POINT DE DÉPART</label>
+            <select class="filter-select" id="depart">
+                <option value="">Choisir...</option>
+                <option value="akwa">Akwa</option>
+                <option value="bonanjo">Bonanjo</option>
+                <option value="deido">Deido</option>
+                <option value="ndokotti">Ndokotti</option>
+                <option value="bessengue">Bessengue</option>
+                <option value="logbassa">Logbassa</option>
+                <option value="bonapriso">Bonapriso</option>
+                <option value="makepe">Makepe</option>
+            </select>
+        </div>
+
+        <div class="filter-group">
+            <label class="filter-label">DESTINATION</label>
+            <select class="filter-select" id="destination">
+                <option value="">Choisir...</option>
+                <option value="akwa">Akwa</option>
+                <option value="bonanjo">Bonanjo</option>
+                <option value="deido">Deido</option>
+                <option value="ndokotti">Ndokotti</option>
+                <option value="bessengue">Bessengue</option>
+                <option value="logbassa">Logbassa</option>
+                <option value="bonapriso">Bonapriso</option>
+                <option value="makepe">Makepe</option>
+            </select>
+        </div>
+
+        <div class="filter-group">
+            <label class="filter-label">HEURE DE DÉPART</label>
+            <input type="time" class="filter-input" id="heure" value="08:00">
+        </div>
+
+        <button class="filter-btn" onclick="calculerItineraire()">CALCULER L'ITINÉRAIRE</button>
+
+        <!-- RÉSULTAT -->
+        <div class="route-result" id="routeResult">
+            <div style="font-size:11px; font-weight:700; color:#C9A96E; letter-spacing:1px; margin-bottom:10px;">RÉSULTAT FLOW</div>
+            <div class="route-stat">
+                <span>Distance</span>
+                <span class="route-stat-val" id="res-distance">--</span>
+            </div>
+            <div class="route-stat">
+                <span>Durée estimée</span>
+                <span class="route-stat-val" id="res-duree">--</span>
+            </div>
+            <div class="route-stat">
+                <span>Niveau trafic</span>
+                <span class="route-stat-val" id="res-trafic">--</span>
+            </div>
+            <div class="route-stat">
+                <span>Via</span>
+                <span class="route-stat-val" id="res-via">--</span>
+            </div>
+            <div id="res-conseil" style="margin-top:12px; font-size:12px; color:#444; line-height:1.6; padding:10px; background:#fff; border-radius:4px; border:0.5px solid #E0E0E0;"></div>
+        </div>
+
+        <!-- INCIDENTS -->
+        <div style="margin-top:24px;">
+            <div style="font-size:11px; font-weight:700; color:#C9A96E; letter-spacing:2px; margin-bottom:14px;">INCIDENTS EN COURS</div>
+            <div style="font-size:13px; color:#444; padding:10px 0; border-bottom:0.5px solid #E0E0E0;">
+                <span style="color:#A00000; font-weight:700;">●</span> Embouteillage — Rond-point Deido
+            </div>
+            <div style="font-size:13px; color:#444; padding:10px 0; border-bottom:0.5px solid #E0E0E0;">
+                <span style="color:#8B6400; font-weight:700;">●</span> Travaux — Bd de la Liberté
+            </div>
+            <div style="font-size:13px; color:#444; padding:10px 0;">
+                <span style="color:#1A6640; font-weight:700;">●</span> Fluide — Akwa centre
+            </div>
+        </div>
+    </aside>
+
+    <!-- CARTE -->
+    <div class="map-container">
+        <div id="map"></div>
+
+        <!-- LÉGENDE -->
+        <div class="map-legend">
+            <div style="font-size:11px; font-weight:700; color:#1A0A00; margin-bottom:8px; letter-spacing:1px;">TRAFIC</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#1A6640;"></div> Fluide</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#8B6400;"></div> Modéré</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#A00000;"></div> Bloqué</div>
+            <div class="legend-item"><div class="legend-dot" style="background:#C9A96E;"></div> Station</div>
+        </div>
+    </div>
+</div>
+
+<!-- FLOW FLOTTANT -->
+<button class="flow-btn" onclick="toggleFlowMap()">FL</button>
+<div class="flow-window" id="flowWindowMap">
+    <div class="flow-window-header">
+        <span class="flow-window-title">FLOW — Navigation</span>
+        <span class="flow-window-close" onclick="toggleFlowMap()">✕</span>
+    </div>
+    <div class="flow-window-messages" id="flowMessagesMap">
+        <div class="flow-msg-bubble bot">
+            <div class="bubble">Bonjour ! Je suis FLOW. Choisissez un itinéraire et je vous guide.</div>
+        </div>
+    </div>
+    <div class="flow-window-input">
+        <input type="text" id="flowInputMap" placeholder="Posez une question..." onkeypress="if(event.key==='Enter') envoyerFlowMap()">
+        <button onclick="envoyerFlowMap()">Envoyer</button>
+    </div>
+</div>
+
+<script src="leaflet.js"></script>
+<script>
+// DONNÉES QUARTIERS DOUALA
+const quartiers = {
+    akwa:      { lat: 4.0511, lng: 9.7085, nom: "Akwa",      trafic: "fluide",  couleur: "#1A6640" },
+    bonanjo:   { lat: 4.0450, lng: 9.7020, nom: "Bonanjo",   trafic: "fluide",  couleur: "#1A6640" },
+    deido:     { lat: 4.0620, lng: 9.7150, nom: "Deido",     trafic: "bloque",  couleur: "#A00000" },
+    ndokotti:  { lat: 4.0750, lng: 9.7200, nom: "Ndokotti",  trafic: "modere",  couleur: "#8B6400" },
+    bessengue: { lat: 4.0480, lng: 9.7120, nom: "Bessengue", trafic: "modere",  couleur: "#8B6400" },
+    logbassa:  { lat: 4.0350, lng: 9.7300, nom: "Logbassa",  trafic: "fluide",  couleur: "#1A6640" },
+    bonapriso: { lat: 4.0420, lng: 9.6980, nom: "Bonapriso", trafic: "fluide",  couleur: "#1A6640" },
+    makepe:    { lat: 4.0680, lng: 9.7350, nom: "Makepe",    trafic: "modere",  couleur: "#8B6400" }
+}
+
+const itineraires = {
+    "akwa-bonanjo":   { distance: "3.2 km", duree: "12 min", trafic: "Fluide",  via: "Bd de la République",  conseil: "Bonne route ! Trafic fluide sur cet axe en ce moment." },
+    "akwa-deido":     { distance: "4.1 km", duree: "35 min", trafic: "Bloqué",  via: "Av. du Général de Gaulle", conseil: "Attention ! Embouteillage signalé. Préférez partir après 19h." },
+    "akwa-ndokotti":  { distance: "5.8 km", duree: "28 min", trafic: "Modéré", via: "Bd de la Liberté",      conseil: "Trafic modéré. Départ recommandé avant 7h30 ou après 9h." },
+    "akwa-bessengue": { distance: "2.9 km", duree: "15 min", trafic: "Modéré", via: "Rue Joffre",            conseil: "Axe accessible. Quelques ralentissements au carrefour." },
+    "akwa-logbassa":  { distance: "7.5 km", duree: "18 min", trafic: "Fluide",  via: "Route de Bonabéri",    conseil: "Excellent itinéraire ! Fluide tout le long." },
+    "akwa-bonapriso": { distance: "2.1 km", duree: "8 min",  trafic: "Fluide",  via: "Av. Ahidjo",           conseil: "Trajet court et fluide. Idéal maintenant." },
+    "akwa-makepe":    { distance: "6.2 km", duree: "25 min", trafic: "Modéré", via: "Bd de la Liberté",      conseil: "Trafic modéré. Comptez 25 minutes environ." },
+    "bonanjo-deido":  { distance: "5.0 km", duree: "32 min", trafic: "Bloqué",  via: "Av. du Général de Gaulle", conseil: "Zone congestionnée. Évitez si possible." },
+    "bonanjo-ndokotti":{ distance: "6.3 km", duree: "25 min", trafic: "Modéré", via: "Bd de la Liberté",     conseil: "Trafic modéré prévisible. Partez tôt." },
+    "ndokotti-deido": { distance: "3.9 km", duree: "30 min", trafic: "Bloqué",  via: "Rd-pt Deido",          conseil: "Embouteillage au rond-point Deido. Prenez la déviation." }
+}
+
+// INITIALISER LA CARTE
+const map = L.map('map').setView([4.0511, 9.7085], 13)
+
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© OpenStreetMap'
+}).addTo(map)
+
+// MARQUEURS QUARTIERS
+Object.values(quartiers).forEach(q => {
+    const marker = L.circleMarker([q.lat, q.lng], {
+        radius: 10,
+        fillColor: q.couleur,
+        color: '#1A0A00',
+        weight: 2,
+        fillOpacity: 0.9
+    }).addTo(map)
+
+    marker.bindPopup(`
+        <div style="font-family:Arial; padding:4px;">
+            <strong style="font-size:14px;">${q.nom}</strong><br>
+            <span style="color:${q.couleur}; font-size:13px; font-weight:700;">${q.trafic.charAt(0).toUpperCase() + q.trafic.slice(1)}</span>
+        </div>
+    `)
+})
+
+let routeLayer = null
+
+function calculerItineraire() {
+    const dep = document.getElementById('depart').value
+    const dest = document.getElementById('destination').value
+
+    if(!dep || !dest) { alert('Choisissez un départ et une destination'); return }
+    if(dep === dest) { alert('Le départ et la destination sont identiques'); return }
+
+    const cle = dep + '-' + dest
+    const cleInverse = dest + '-' + dep
+    const data = itineraires[cle] || itineraires[cleInverse]
+
+    const result = document.getElementById('routeResult')
+    result.classList.add('visible')
+
+    if(data) {
+        document.getElementById('res-distance').textContent = data.distance
+        document.getElementById('res-duree').textContent = data.duree
+        document.getElementById('res-trafic').textContent = data.trafic
+        document.getElementById('res-via').textContent = data.via
+        document.getElementById('res-conseil').textContent = 'FLOW : ' + data.conseil
+    } else {
+        document.getElementById('res-distance').textContent = 'N/A'
+        document.getElementById('res-duree').textContent = 'N/A'
+        document.getElementById('res-trafic').textContent = 'Inconnu'
+        document.getElementById('res-via').textContent = 'Non défini'
+        document.getElementById('res-conseil').textContent = 'FLOW : Données insuffisantes pour cet itinéraire.'
+    }
+
+    // TRACER LA LIGNE
+    if(routeLayer) map.removeLayer(routeLayer)
+    const q1 = quartiers[dep]
+    const q2 = quartiers[dest]
+    if(q1 && q2) {
+        const color = data ? (data.trafic === 'Fluide' ? '#1A6640' : data.trafic === 'Modéré' ? '#8B6400' : '#A00000') : '#C9A96E'
+        routeLayer = L.polyline([[q1.lat, q1.lng],[q2.lat, q2.lng]], {
+            color: color, weight: 4, opacity: 0.8, dashArray: '8,4'
+        }).addTo(map)
+        map.fitBounds(routeLayer.getBounds(), { padding: [40, 40] })
+    }
+}
+
+// FLOW MAP
+const reponsesFlowMap = {
+    'ndokotti': 'Trafic modéré à Ndokotti. Évitez le Boulevard de la Liberté entre 7h-9h et 17h-19h.',
+    'akwa': 'Akwa est fluide. Vitesse moyenne 35 km/h. Bon moment pour circuler.',
+    'deido': 'Deido est bloqué ! Embouteillage au rond-point. Temps d\'attente : 35 min.',
+    'bonanjo': 'Bonanjo est accessible. Trafic fluide sur l\'axe principal.',
+    'bessengue': 'Bessengue : trafic modéré. Station la plus chargée de la journée.',
+    'logbassa': 'Logbassa : trafic fluide. Excellent moment pour y aller.',
+    'makepe': 'Makepe : trafic modéré. Préférez partir avant 7h30.',
+    'itinéraire': 'Utilisez le panneau à gauche pour calculer votre itinéraire optimal.',
+    'bonjour': 'Bonjour ! Je suis FLOW. Comment puis-je vous aider à naviguer à Douala ?'
+}
+
+let flowMapOpen = false
+
+function toggleFlowMap() {
+    flowMapOpen = !flowMapOpen
+    document.getElementById('flowWindowMap').classList.toggle('open', flowMapOpen)
+}
+
+function envoyerFlowMap() {
+    const input = document.getElementById('flowInputMap')
+    const messages = document.getElementById('flowMessagesMap')
+    const question = input.value.trim()
+    if(!question) return
+
+    messages.innerHTML += `<div class="flow-msg-bubble user"><div class="bubble">${question}</div></div>`
+    input.value = ''
+
+    setTimeout(() => {
+        const cle = Object.keys(reponsesFlowMap).find(k => question.toLowerCase().includes(k))
+        const reponse = cle ? reponsesFlowMap[cle] : "Essayez : Akwa, Deido, Ndokotti, Bonanjo, Bessengue, Logbassa ou Makepe."
+        messages.innerHTML += `<div class="flow-msg-bubble bot"><div class="bubble">${reponse}</div></div>`
+        messages.scrollTop = messages.scrollHeight
+    }, 700)
+}
+</script>
+
+</body>
+</html>

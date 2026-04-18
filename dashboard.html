@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TrafficFlow - Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="chartjs.min.js"></script>
+    <script src="app.js"></script>
+</head>
+<body>
+
+
+<nav class="navbar">
+    <div class="nav-logo">TRAFFICFLOW</div>
+    <div class="nav-links">
+        <a href="index.html" class="nav-link active">Accueil</a>
+        <a href="map.html" class="nav-link">Carte</a>
+        <a href="dashboard.html" class="nav-link">Dashboard</a>
+        <a href="connexion.html" class="nav-link">Connexion</a>
+        <a href="communauté.html" class="nav-link">Communaute</a>
+    </div>
+</nav>
+
+<div class="dashboard">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <div class="sidebar-title">FILTRES</div>
+        <div class="filter-group">
+            <label class="filter-label">STATION</label>
+            <select class="filter-select" id="station">
+                <option>Bessengue</option>
+                <option>Liberté</option>
+                <option>Rond-point Deïdo</option>
+                <option>Akwa</option>
+                <option>Bonapriso</option>
+            </select>
+        </div>
+        <div class="filter-group">
+            <label class="filter-label">DATE DÉBUT</label>
+            <input type="date" class="filter-input">
+        </div>
+        <div class="filter-group">
+            <label class="filter-label">DATE FIN</label>
+            <input type="date" class="filter-input">
+        </div>
+        <button class="filter-btn" onclick="appliquerFiltres()">APPLIQUER</button>
+        <p style="font-size:11px; color:#888; margin-top:24px;">Dernière mise à jour :<br><strong style="color:#C9A96E;">11/04/2026</strong></p>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main-content">
+        <h1 class="page-title">Analyse des flux de transport</h1>
+        <p class="page-sub">Données des capteurs urbains — Douala, Cameroun</p>
+
+        <!-- KPIs -->
+        <div class="kpis">
+            <div class="kpi-card">
+                <div class="kpi-label">VOLUME TOTAL</div>
+                <div class="kpi-val">124 580<span class="kpi-unit">véh.</span></div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-label">VITESSE MOYENNE</div>
+                <div class="kpi-val">18<span class="kpi-unit">km/h</span></div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-label">TAUX D'OCCUPATION</div>
+                <div class="kpi-val">67<span class="kpi-unit">%</span></div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-label">PIC D'AFFLUENCE</div>
+                <div class="kpi-val">18<span class="kpi-unit">h15</span></div>
+            </div>
+        </div>
+
+        <!-- GRAPHIQUES -->
+        <div class="charts-grid">
+            <div class="chart-card">
+                <div class="chart-title">Évolution horaire du trafic</div>
+                <canvas id="chartHoraire"></canvas>
+            </div>
+            <div class="chart-card">
+                <div class="chart-title">Top 5 stations</div>
+                <ul class="top-stations">
+                    <li>
+                        <div>
+                            <span class="station-rank">01</span>Bessengue
+                            <div class="station-bar"><div class="station-bar-fill" style="width:45%"></div></div>
+                        </div>
+                        <span style="font-weight:800;">45%</span>
+                    </li>
+                    <li>
+                        <div>
+                            <span class="station-rank">02</span>Liberté
+                            <div class="station-bar"><div class="station-bar-fill" style="width:32%"></div></div>
+                        </div>
+                        <span style="font-weight:800;">32%</span>
+                    </li>
+                    <li>
+                        <div>
+                            <span class="station-rank">03</span>Rond-point Deïdo
+                            <div class="station-bar"><div class="station-bar-fill" style="width:28%"></div></div>
+                        </div>
+                        <span style="font-weight:800;">28%</span>
+                    </li>
+                    <li>
+                        <div>
+                            <span class="station-rank">04</span>Akwa
+                            <div class="station-bar"><div class="station-bar-fill" style="width:21%"></div></div>
+                        </div>
+                        <span style="font-weight:800;">21%</span>
+                    </li>
+                    <li>
+                        <div>
+                            <span class="station-rank">05</span>Bonapriso
+                            <div class="station-bar"><div class="station-bar-fill" style="width:17%"></div></div>
+                        </div>
+                        <span style="font-weight:800;">17%</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- DEUXIÈME LIGNE -->
+        <div class="charts-grid">
+            <div class="chart-card">
+                <div class="chart-title">Comparaison jours de la semaine</div>
+                <canvas id="chartJours"></canvas>
+            </div>
+            <div class="chart-card">
+                <div class="chart-title">Répartition par type de véhicule</div>
+                <canvas id="chartTypes"></canvas>
+            </div>
+        </div>
+
+        <!-- FLOW FLOTTANT -->
+<button class="flow-btn" onclick="toggleFlow()">FL</button>
+
+<div class="flow-window" id="flowWindow">
+    <div class="flow-window-header">
+        <span class="flow-window-title">⬡ FLOW — Assistant IA</span>
+        <span class="flow-window-close" onclick="toggleFlow()">✕</span>
+    </div>
+    <div class="flow-window-messages" id="flowMessages">
+        <div class="flow-msg-bubble bot">
+            <div class="bubble">Bonjour ! Je suis FLOW. Posez-moi une question sur le trafic à Douala.</div>
+        </div>
+    </div>
+    <div class="flow-window-input">
+        <input type="text" id="flowInput" placeholder="Ex: Trafic à Ndokotti ?" onkeypress="if(event.key==='Enter') envoyerFlow()">
+        <button onclick="envoyerFlow()">Envoyer</button>
+    </div>
+</div>
+
+<footer>
+    © 2025-2026 <span>TrafficFlow</span> · BY GROUP 23
+</footer>
+
+<script src="app.js"></script>
+</body>
+</html>

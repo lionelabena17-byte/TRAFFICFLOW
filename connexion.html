@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TrafficFlow - Connexion</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+
+<nav class="navbar">
+    <div class="nav-logo">TRAFFICFLOW</div>
+    <div class="nav-links">
+        <a href="index.html" class="nav-link active">Accueil</a>
+        <a href="map.html" class="nav-link">Carte</a>
+        <a href="dashboard.html" class="nav-link">Dashboard</a>
+        <a href="connexion.html" class="nav-link">Connexion</a>
+        <a href="communauté.html" class="nav-link">Communaute</a>
+    </div>
+</nav>
+
+<div class="connexion-page">
+    <div class="connexion-card">
+
+        <!-- LOGO -->
+        <div style="text-align:center; margin-bottom:28px;">
+            <div style="font-size:22px; font-weight:800; color:#1A0A00; letter-spacing:3px;">TRAFFICFLOW</div>
+            <div style="font-size:11px; color:#C9A96E; letter-spacing:2px; margin-top:4px;">INTELLIGENCE · ÉLÉGANCE · DOUALA</div>
+        </div>
+
+        <!-- TABS -->
+        <div style="display:flex; border-bottom:1px solid #E0E0E0; margin-bottom:28px;">
+            <button onclick="switchTab('connexion')" id="tab-connexion" style="flex:1; padding:12px; background:none; border:none; font-size:13px; font-weight:700; color:#1A0A00; border-bottom:2px solid #C9A96E; cursor:pointer; letter-spacing:1px;">CONNEXION</button>
+            <button onclick="switchTab('inscription')" id="tab-inscription" style="flex:1; padding:12px; background:none; border:none; font-size:13px; font-weight:700; color:#999; border-bottom:2px solid transparent; cursor:pointer; letter-spacing:1px;">INSCRIPTION</button>
+        </div>
+
+        <!-- FORMULAIRE CONNEXION -->
+        <div id="form-connexion">
+            <div class="form-group">
+                <label class="form-label">EMAIL OU TÉLÉPHONE</label>
+                <input type="email" class="form-input" id="login-email" placeholder="vous@exemple.com">
+                <div class="form-error" id="error-login-email"></div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">MOT DE PASSE</label>
+                <div style="position:relative;">
+                    <input type="password" class="form-input" id="login-password" placeholder="••••••••">
+                    <button onclick="togglePassword('login-password')" style="position:absolute; right:14px; top:50%; transform:translateY(-50%); background:none; border:none; cursor:pointer; color:#999; font-size:16px;">👁</button>
+                </div>
+                <div class="form-error" id="error-login-password"></div>
+            </div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:24px;">
+                <label style="display:flex; align-items:center; gap:8px; font-size:13px; color:#666; cursor:pointer;">
+                    <input type="checkbox" id="remember"> Se souvenir de moi
+                </label>
+                <a href="#" style="font-size:13px; color:#C9A96E; text-decoration:none;">Mot de passe oublié ?</a>
+            </div>
+
+            <!-- BOUTONS SOCIAUX -->
+            <div style="display:flex; gap:10px; margin-bottom:20px;">
+                <button style="flex:1; padding:11px; border:1px solid #E0E0E0; border-radius:4px; background:#fff; font-size:12px; cursor:pointer; font-weight:600;">G Google</button>
+                <button style="flex:1; padding:11px; border:1px solid #E0E0E0; border-radius:4px; background:#fff; font-size:12px; cursor:pointer; font-weight:600;">Apple</button>
+                <button style="flex:1; padding:11px; border:1px solid #E0E0E0; border-radius:4px; background:#fff; font-size:12px; cursor:pointer; font-weight:600;">Microsoft</button>
+            </div>
+
+            <div style="text-align:center; font-size:12px; color:#999; margin-bottom:16px;">— ou —</div>
+
+            <button class="form-btn" onclick="seConnecter()">SE CONNECTER</button>
+
+            <!-- BADGE SÉCURITÉ -->
+            <div style="display:flex; align-items:center; justify-content:center; gap:6px; margin-top:16px;">
+                <span style="font-size:14px;">🔒</span>
+                <span style="font-size:11px; color:#888;">Connexion sécurisée · Vos données sont protégées</span>
+            </div>
+        </div>
+
+        <!-- FORMULAIRE INSCRIPTION -->
+        <div id="form-inscription" style="display:none;">
+            <div class="form-group">
+                <label class="form-label">NOM COMPLET</label>
+                <input type="text" class="form-input" id="reg-nom" placeholder="Boris Lionel">
+                <div class="form-error" id="error-reg-nom"></div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">EMAIL</label>
+                <input type="email" class="form-input" id="reg-email" placeholder="vous@exemple.com">
+                <div class="form-error" id="error-reg-email"></div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">MOT DE PASSE</label>
+                <div style="position:relative;">
+                    <input type="password" class="form-input" id="reg-password" placeholder="Min. 8 caractères" oninput="checkPasswordStrength(this.value)">
+                    <button onclick="togglePassword('reg-password')" style="position:absolute; right:14px; top:50%; transform:translateY(-50%); background:none; border:none; cursor:pointer; color:#999; font-size:16px;">👁</button>
+                </div>
+                <!-- INDICATEUR FORCE MOT DE PASSE -->
+                <div style="margin-top:8px;">
+                    <div style="height:4px; background:#E0E0E0; border-radius:2px; overflow:hidden;">
+                        <div id="password-strength-bar" style="height:100%; width:0%; transition:all 0.3s; border-radius:2px;"></div>
+                    </div>
+                    <div id="password-strength-text" style="font-size:11px; color:#999; margin-top:4px;"></div>
+                </div>
+                <div class="form-error" id="error-reg-password"></div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">RÉGION</label>
+                <select class="form-input" id="reg-region">
+                    <option value="">Sélectionnez votre région</option>
+                    <option>Douala — Akwa</option>
+                    <option>Douala — Bonanjo</option>
+                    <option>Douala — Deido</option>
+                    <option>Douala — Ndokotti</option>
+                    <option>Douala — Bessengue</option>
+                    <option>Douala — Bonapriso</option>
+                    <option>Douala — Makepe</option>
+                    <option>Yaoundé</option>
+                    <option>Autre</option>
+                </select>
+            </div>
+
+            <!-- CONSENTEMENT -->
+            <div style="background:#F7F7F7; border-radius:4px; padding:14px; margin-bottom:20px; border:0.5px solid #E0E0E0;">
+                <label style="display:flex; gap:10px; align-items:flex-start; cursor:pointer; font-size:13px; color:#444; line-height:1.5;">
+                    <input type="checkbox" id="consent" style="margin-top:3px; flex-shrink:0;">
+                    <span>En créant mon compte, j'accepte la <a href="#" onclick="showPrivacy()" style="color:#C9A96E;">Politique de Confidentialité</a> et les <a href="#" style="color:#C9A96E;">Conditions Générales</a>. J'accepte le traitement de mes données personnelles conformément à la clause de confidentialité.</span>
+                </label>
+            </div>
+
+            <button class="form-btn" onclick="sInscrire()">CRÉER MON COMPTE</button>
+
+            <div style="display:flex; align-items:center; justify-content:center; gap:6px; margin-top:16px;">
+                <span style="font-size:14px;">🔒</span>
+                <span style="font-size:11px; color:#888;">Connexion sécurisée · Vos données sont protégées</span>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- POPUP CONFIDENTIALITÉ -->
+<div id="privacy-popup" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:9999; justify-content:center; align-items:center;">
+    <div style="background:#fff; border-radius:8px; padding:32px; max-width:500px; width:90%; max-height:80vh; overflow-y:auto; border:1px solid #C9A96E;">
+        <h3 style="font-size:18px; font-weight:700; margin-bottom:16px;">Politique de Confidentialité</h3>
+        <p style="font-size:13px; color:#444; line-height:1.7; margin-bottom:12px;">TrafficFlow collecte et traite vos données personnelles (adresse e-mail, mot de passe, données de localisation et d'usage) dans le but exclusif de vous fournir un service d'analyse de trafic urbain.</p>
+        <p style="font-size:13px; color:#444; line-height:1.7; margin-bottom:12px;">Vos données ne sont jamais revendues à des tiers. Vous disposez d'un droit d'accès, de rectification et de suppression de vos données à tout moment.</p>
+        <p style="font-size:13px; color:#444; line-height:1.7; margin-bottom:20px;">Projet académique — IUT de Douala, Groupe 23. © 2025-2026 TrafficFlow.</p>
+        <button onclick="closePrivacy()" style="padding:12px 32px; background:#1A0A00; color:#C9A96E; border:1px solid #C9A96E; border-radius:4px; cursor:pointer; font-weight:700; font-size:13px;">FERMER</button>
+    </div>
+</div>
+
+<footer>
+    © 2025-2026 <span>TrafficFlow</span> · IUT de Douala · Projet académique groupe 23
+</footer>
+
+<script>
+function switchTab(tab) {
+    document.getElementById('form-connexion').style.display = tab === 'connexion' ? 'block' : 'none'
+    document.getElementById('form-inscription').style.display = tab === 'inscription' ? 'block' : 'none'
+    document.getElementById('tab-connexion').style.color = tab === 'connexion' ? '#1A0A00' : '#999'
+    document.getElementById('tab-connexion').style.borderBottomColor = tab === 'connexion' ? '#C9A96E' : 'transparent'
+    document.getElementById('tab-inscription').style.color = tab === 'inscription' ? '#1A0A00' : '#999'
+    document.getElementById('tab-inscription').style.borderBottomColor = tab === 'inscription' ? '#C9A96E' : 'transparent'
+}
+
+function togglePassword(id) {
+    const input = document.getElementById(id)
+    input.type = input.type === 'password' ? 'text' : 'password'
+}
+
+function checkPasswordStrength(val) {
+    const bar = document.getElementById('password-strength-bar')
+    const text = document.getElementById('password-strength-text')
+    if(val.length === 0) { bar.style.width = '0%'; text.textContent = ''; return }
+    if(val.length < 6) { bar.style.width = '25%'; bar.style.background = '#A00000'; text.textContent = 'Faible'; text.style.color = '#A00000'; return }
+    if(val.length < 10) { bar.style.width = '60%'; bar.style.background = '#8B6400'; text.textContent = 'Moyen'; text.style.color = '#8B6400'; return }
+    bar.style.width = '100%'; bar.style.background = '#1A6640'; text.textContent = 'Fort'; text.style.color = '#1A6640'
+}
+
+function seConnecter() {
+    const email = document.getElementById('login-email').value
+    const password = document.getElementById('login-password').value
+    let valid = true
+    document.getElementById('error-login-email').textContent = ''
+    document.getElementById('error-login-password').textContent = ''
+    if(!email) { document.getElementById('error-login-email').textContent = 'Email requis'; valid = false }
+    if(!password) { document.getElementById('error-login-password').textContent = 'Mot de passe requis'; valid = false }
+    if(valid) window.location.href = 'dashboard.html'
+}
+
+function sInscrire() {
+    const nom = document.getElementById('reg-nom').value
+    const email = document.getElementById('reg-email').value
+    const password = document.getElementById('reg-password').value
+    const consent = document.getElementById('consent').checked
+    let valid = true
+    document.getElementById('error-reg-nom').textContent = ''
+    document.getElementById('error-reg-email').textContent = ''
+    document.getElementById('error-reg-password').textContent = ''
+    if(!nom) { document.getElementById('error-reg-nom').textContent = 'Nom requis'; valid = false }
+    if(!email) { document.getElementById('error-reg-email').textContent = 'Email requis'; valid = false }
+    if(password.length < 8) { document.getElementById('error-reg-password').textContent = 'Min. 8 caractères'; valid = false }
+    if(!consent) { alert('Veuillez accepter la politique de confidentialité'); valid = false }
+    if(valid) window.location.href = 'dashboard.html'
+}
+
+function showPrivacy() {
+    document.getElementById('privacy-popup').style.display = 'flex'
+}
+
+function closePrivacy() {
+    document.getElementById('privacy-popup').style.display = 'none'
+}
+</script>
+
+</body>
+</html>
