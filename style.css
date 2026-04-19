@@ -274,3 +274,26 @@ footer span { color: var(--or); }
     margin-top: 4px;
     min-height: 16px;
 }
+
+/* NAVBAR MOBILE */
+@media (max-width: 600px) {
+    .navbar { padding: 14px 16px; flex-wrap: wrap; gap: 12px; }
+    .nav-links { gap: 12px; flex-wrap: wrap; }
+    .nav-link { font-size: 12px; }
+    .nav-logo { font-size: 16px; }
+    .hero { padding: 40px 16px; }
+    .hero-title { font-size: 28px; }
+    .hero-sub { font-size: 14px; }
+    .traffic-cards { grid-template-columns: 1fr; }
+    .info-strip { flex-direction: column; }
+    .info-box { border-right: none; border-bottom: 1px solid #2A1A0A; padding: 20px 16px; }
+    .flow-bar { padding: 16px; }
+    .dashboard { flex-direction: column; }
+    .sidebar { width: 100%; border-right: none; border-bottom: 1px solid #E0E0E0; }
+    .kpis { grid-template-columns: repeat(2, 1fr); }
+    .charts-grid { grid-template-columns: 1fr; }
+    .main-content { padding: 16px; }
+    .flow-window { width: 90%; right: 5%; }
+    .map-panel { flex-direction: column; }
+    .map-sidebar { width: 100%; }
+}
