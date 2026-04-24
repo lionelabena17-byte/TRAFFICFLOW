@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TrafficFlow - Communauté</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .comm-container { max-width: 680px; margin: 0 auto; padding: 0; }
+        
+        /* HEADER COMMUNAUTÉ */
+        .comm-header { padding: 20px 24px 0; border-bottom: 1px solid #E0E0E0; background: #fff; position: sticky; top: 65px; z-index: 50; }
+        .comm-header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+        .comm-header-title { font-size: 20px; font-weight: 700; }
+        .comm-online { display: flex; align-items: center; gap: 6px; font-size: 12px; color: #1A6640; }
+        .comm-online-dot { width: 7px; height: 7px; border-radius: 50%; background: #1A6640; }
+        
+        /* ONGLETS ZONES */
+        .zone-tabs { display: flex; gap: 0; overflow-x: auto; scrollbar-width: none; }
+        .zone-tabs::-webkit-scrollbar { display: none; }
+        .zone-tab { padding: 12px 16px; font-size: 13px; font-weight: 500; color: #888; border: none; background: none; cursor: pointer; white-space: nowrap; border-bottom: 2px solid transparent; transition: all 0.2s; flex-shrink: 0; }
+        .zone-tab:hover { color: #1A0A00; background: #F7F7F7; }
+        .zone-tab.active { color: #1A0A00; border-bottom-color: #C9A96E; font-weight: 700; }
+
+        /* COMPOSER */
+        .composer { padding: 16px 24px; border-bottom: 1px solid #E0E0E0; background: #fff; display: flex; gap: 12px; }
+        .composer-avatar { width: 40px; height: 40px; border-radius: 50%; background: #1A0A00; border: 1px solid #C9A96E; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: #C9A96E; flex-shrink: 0; }
+        .composer-right { flex: 1; }
+        .composer-zone { font-size: 12px; color: #C9A96E; font-weight: 600; margin-bottom: 6px; cursor: pointer; }
+        .composer-textarea { width: 100%; border: none; outline: none; font-size: 16px; font-family: inherit; resize: none; color: #1A0A00; background: transparent; min-height: 60px; }
+        .composer-textarea::placeholder { color: #AAA; }
+        .composer-footer { display: flex; justify-content: space-between; align-items: center; margin-top: 8px; padding-top: 8px; border-top: 1px solid #F0F0F0; }
+        .composer-types { display: flex; gap: 8px; }
+        .type-btn { padding: 4px 12px; border-radius: 20px; border: 1px solid #E0E0E0; font-size: 12px; cursor: pointer; background: #fff; color: #666; transition: all 0.2s; }
+        .type-btn.selected { background: #1A0A00; color: #C9A96E; border-color: #1A0A00; }
+        .publish-btn { padding: 8px 20px; background: #1A0A00; color: #C9A96E; border: none; border-radius: 20px; font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.2s; }
+        .publish-btn:hover { background: #C9A96E; color: #1A0A00; }
+        .char-count { font-size: 11px; color: #AAA; }
+
+        /* POSTS */
+        .posts-feed { background: #fff; }
+        .post-item { padding: 16px 24px; border-bottom: 1px solid #F0F0F0; display: flex; gap: 12px; transition: background 0.15s; cursor: pointer; }
+        .post-item:hover { background: #FAFAFA; }
+        .post-item-avatar { width: 40px; height: 40px; border-radius: 50%; background: #1A0A00; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; color: #C9A96E; flex-shrink: 0; }
+        .post-item-avatar.flow { background: #C9A96E; color: #1A0A00; }
+        .post-item-right { flex: 1; min-width: 0; }
+        .post-item-header { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; flex-wrap: wrap; }
+        .post-item-author { font-size: 14px; font-weight: 700; color: #1A0A00; }
+        .post-item-time { font-size: 13px; color: #AAA; }
+        .post-item-zone { font-size: 11px; color: #C9A96E; font-weight: 600; background: #FFF8EE; padding: 2px 8px; border-radius: 10px; }
+        .post-badge { font-size: 11px; padding: 2px 8px; border-radius: 10px; font-weight: 600; }
+        .badge-incident { background: #FDECEA; color: #A00000; }
+        .badge-info { background: #FFF8E8; color: #8B6400; }
+        .badge-question { background: #E8F4EE; color: #1A6640; }
+        .post-item-content { font-size: 15px; color: #333; line-height: 1.5; margin-bottom: 10px; }
+        .post-item-actions { display: flex; gap: 20px; }
+        .post-action-btn { background: none; border: none; font-size: 13px; color: #AAA; cursor: pointer; display: flex; align-items: center; gap: 5px; padding: 4px 0; transition: color 0.2s; }
+        .post-action-btn:hover { color: #C9A96E; }
+
+        /* EMPTY STATE */
+        .empty-state { text-align: center; padding: 60px 24px; color: #AAA; }
+        .empty-state-icon { font-size: 40px; margin-bottom: 12px; }
+        .empty-state-text { font-size: 15px; }
+
+        /* RECHERCHE */
+        .search-bar { padding: 12px 24px; background: #F7F7F7; border-bottom: 1px solid #E0E0E0; }
+        .search-input { width: 100%; padding: 10px 16px; border: 1px solid #E0E0E0; border-radius: 20px; font-size: 14px; outline: none; background: #fff; }
+        .search-input:focus { border-color: #C9A96E; }
+
+        @media(max-width: 600px) {
+            .comm-header { top: 58px; }
+            .composer { padding: 12px 16px; }
+            .post-item { padding: 12px 16px; }
+            .zone-tab { padding: 10px 12px; font-size: 12px; }
+        }
+    </style>
+</head>
+<body>
+
+<nav class="navbar">
+    <div class="nav-logo">TRAFFICFLOW</div>
+    <div class="nav-links">
+        <a href="index.html" class="nav-link">Accueil</a>
+        <a href="map.html" class="nav-link">Carte</a>
+        <a href="dashboard.html" class="nav-link">Dashboard</a>
+        <a href="communaute.html" class="nav-link active">Communauté</a>
+        <a href="connexion.html" class="nav-link">Connexion</a>
+    </div>
+</nav>
+
+<div class="comm-container">
+
+    <!-- HEADER -->
+    <div class="comm-header">
+        <div class="comm-header-top">
+            <div class="comm-header-title">Communauté</div>
+            <div class="comm-online">
+                <div class="comm-online-dot"></div>
+                <span>247 actifs</span>
+            </div>
+        </div>
+        <div class="zone-tabs" id="zoneTabs">
+            <button class="zone-tab active" onclick="filtrerZone('tous', this)">🌍 Tous</button>
+            <button class="zone-tab" onclick="filtrerZone('akwa', this)">Akwa</button>
+            <button class="zone-tab" onclick="filtrerZone('bonanjo', this)">Bonanjo</button>
+            <button class="zone-tab" onclick="filtrerZone('deido', this)">Deido</button>
+            <button class="zone-tab" onclick="filtrerZone('ndokotti', this)">Ndokotti</button>
+            <button class="zone-tab" onclick="filtrerZone('bessengue', this)">Bessengue</button>
+            <button class="zone-tab" onclick="filtrerZone('logbassa', this)">Logbassa</button>
+            <button class="zone-tab" onclick="filtrerZone('makepe', this)">Makepe</button>
+            <button class="zone-tab" onclick="filtrerZone('general', this)">📢 Général</button>
+        </div>
+    </div>
+
+    <!-- RECHERCHE -->
+    <div class="search-bar">
+        <input type="text" class="search-input" placeholder="🔍 Rechercher un quartier, incident..." id="searchInput" oninput="rechercherPosts(this.value)">
+    </div>
+
+    <!-- COMPOSER -->
+    <div class="composer">
+        <div class="composer-avatar">VU</div>
+        <div class="composer-right">
+            <div class="composer-zone" id="composerZone" onclick="toggleZoneSelector()">📍 Choisir un quartier ▾</div>
+            <div id="zoneSelectorDropdown" style="display:none; background:#fff; border:1px solid #E0E0E0; border-radius:8px; padding:8px; margin-bottom:8px; display:none; flex-wrap:wrap; gap:6px;">
+                <span onclick="setZone('general')" style="cursor:pointer; padding:4px 10px; border-radius:12px; font-size:12px; border:1px solid #E0E0E0;">📢 Général</span>
+                <span onclick="setZone('akwa')" style="cursor:pointer; padding:4px 10px; border-radius:12px; font-size:12px; border:1px solid #E0E0E0;">Akwa</span>
+                <span onclick="setZone('bonanjo')" style="cursor:pointer; padding:4px 10px; border-radius:12px; font-size:12px; border:1px solid #E0E0E0;">Bonanjo</span>
+                <span onclick="setZone('deido')" style="cursor:pointer; padding:4px 10px; border-radius:12px; font-size:12px; border:1px solid #E0E0E0;">Deido</span>
+                <span onclick="setZone('ndokotti')" style="cursor:pointer; padding:4px 10px; border-radius:12px; font-size:12px; border:1px solid #E0E0E0;">Ndokotti</span>
+                <span onclick="setZone('bessengue')" style="cursor:pointer; padding:4px 10px; border-radius:12px; font-size:12px; border:1px solid #E0E0E0;">Bessengue</span>
+                <span onclick="setZone('logbassa')" style="cursor:pointer; padding:4px 10px; border-radius:12px; font-size:12px; border:1px solid #E0E0E0;">Logbassa</span>
+                <span onclick="setZone('makepe')" style="cursor:pointer; padding:4px 10px; border-radius:12px; font-size:12px; border:1px solid #E0E0E0;">Makepe</span>
+            </div>
+            <textarea class="composer-textarea" id="postContent" placeholder="Quoi de neuf sur la route ?" maxlength="280"></textarea>
+            <div class="composer-footer">
+                <div class="composer-types">
+                    <button class="type-btn selected" onclick="selectType('info', this)">ℹ️ Info</button>
+                    <button class="type-btn" onclick="selectType('incident', this)">🚨 Incident</button>
+                    <button class="type-btn" onclick="selectType('question', this)">❓ Question</button>
+                </div>
+                <div style="display:flex; align-items:center; gap:12px;">
+                    <span class="char-count" id="charCount">280</span>
+                    <button class="publish-btn" onclick="publierPost()">Publier</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FEED -->
+    <div class="posts-feed" id="postsFeed"></div>
+
+</div>
+
+<!-- FLOW FLOTTANT -->
+<button class="flow-btn" onclick="toggleFlowComm()">FL</button>
+<div class="flow-window" id="flowWindowComm">
+    <div class="flow-window-header">
+        <span class="flow-window-title">FLOW — Communauté</span>
+        <span class="flow-window-close" onclick="toggleFlowComm()">✕</span>
+    </div>
+    <div class="flow-window-messages" id="flowMessagesComm">
+        <div class="flow-msg-bubble bot">
+            <div class="bubble">Bienvenue ! Je surveille les incidents signalés par la communauté.</div>
+        </div>
+    </div>
+    <div class="flow-window-input">
+        <input type="text" id="flowInputComm" placeholder="Posez une question..." onkeypress="if(event.key==='Enter') envoyerFlowComm()">
+        <button onclick="envoyerFlowComm()">Envoyer</button>
+    </div>
+</div>
+
+<footer>
+    © 2025-2026 <span>TrafficFlow</span> · IUT de Douala · Groupe 23
+</footer>
+
+<script>
+let posts = [
+    { id: 1, auteur: 'Alain K.', avatar: 'AK', tag: 'incident', zone: 'deido', contenu: 'Gros embouteillage au rond-point Deido ! Evitez si possible, comptez 40 min de retard.', temps: '5 min', likes: 12, liked: false },
+    { id: 2, auteur: 'Marie B.', avatar: 'MB', tag: 'info', zone: 'akwa', contenu: 'Akwa centre est fluide ce matin. Bonne route a tous !', temps: '18 min', likes: 8, liked: false },
+    { id: 3, auteur: 'Patrick N.', avatar: 'PN', tag: 'question', zone: 'general', contenu: 'Quelqu\'un connait une alternative au Boulevard de la Liberte pour aller a Bonapriso ?', temps: '32 min', likes: 3, liked: false },
+    { id: 4, auteur: 'Sophie T.', avatar: 'ST', tag: 'incident', zone: 'logbassa', contenu: 'Accident signale sur la route de Logbassa. Une voie bloquee. La police est sur place.', temps: '1h', likes: 24, liked: false },
+    { id: 5, auteur: 'Jean M.', avatar: 'JM', tag: 'info', zone: 'ndokotti', contenu: 'Travaux termines sur l\'axe Ndokotti-Bessengue. La circulation reprend normalement.', temps: '2h', likes: 15, liked: false },
+    { id: 6, auteur: 'FLOW IA', avatar: 'FL', tag: 'info', zone: 'general', contenu: 'Alerte : pic de trafic prevu a 17h30 sur Deido. Planifiez vos deplacements.', temps: '3h', likes: 31, liked: false }
+]
+
+let filtreZoneActif = 'tous'
+let typeActif = 'info'
+let zoneActif = 'general'
+
+function afficherPosts(liste) {
+    const feed = document.getElementById('postsFeed')
+    if(liste.length === 0) {
+        feed.innerHTML = `<div class="empty-state"><div class="empty-state-icon">🔍</div><div class="empty-state-text">Aucun post dans cette zone pour l'instant.<br>Soyez le premier à signaler !</div></div>`
+        return
+    }
+    feed.innerHTML = liste.map(p => `
+        <div class="post-item">
+            <div class="post-item-avatar ${p.auteur === 'FLOW IA' ? 'flow' : ''}">${p.avatar}</div>
+            <div class="post-item-right">
+                <div class="post-item-header">
+                    <span class="post-item-author">${p.auteur}</span>
+                    <span class="post-item-time">· ${p.temps}</span>
+                    <span class="post-item-zone">📍 ${p.zone.charAt(0).toUpperCase() + p.zone.slice(1)}</span>
+                    <span class="post-badge badge-${p.tag === 'incident' ? 'incident' : p.tag === 'question' ? 'question' : 'info'}">
+                        ${p.tag === 'incident' ? '🚨 Incident' : p.tag === 'question' ? '❓ Question' : 'ℹ️ Info'}
+                    </span>
+                </div>
+                <div class="post-item-content">${p.contenu}</div>
+                <div class="post-item-actions">
+                    <button class="post-action-btn" onclick="likerPost(${p.id}, this)">
+                        ${p.liked ? '❤️' : '🤍'} ${p.likes}
+                    </button>
+                    <button class="post-action-btn">💬 Répondre</button>
+                    <button class="post-action-btn">🔗 Partager</button>
+                </div>
+            </div>
+        </div>
+    `).join('')
+}
+
+function filtrerZone(zone, btn) {
+    filtreZoneActif = zone
+    document.querySelectorAll('.zone-tab').forEach(t => t.classList.remove('active'))
+    btn.classList.add('active')
+    appliquerFiltres()
+}
+
+function appliquerFiltres() {
+    let liste = [...posts]
+    if(filtreZoneActif !== 'tous') liste = liste.filter(p => p.zone === filtreZoneActif)
+    afficherPosts(liste)
+}
+
+function rechercherPosts(query) {
+    if(!query.trim()) { appliquerFiltres(); return }
+    const q = query.toLowerCase()
+    const liste = posts.filter(p =>
+        p.contenu.toLowerCase().includes(q) ||
+        p.zone.toLowerCase().includes(q) ||
+        p.auteur.toLowerCase().includes(q)
+    )
+    afficherPosts(liste)
+}
+
+function selectType(type, btn) {
+    typeActif = type
+    document.querySelectorAll('.type-btn').forEach(b => b.classList.remove('selected'))
+    btn.classList.add('selected')
+}
+
+function setZone(zone) {
+    zoneActif = zone
+    document.getElementById('composerZone').textContent = '📍 ' + zone.charAt(0).toUpperCase() + zone.slice(1) + ' ▾'
+    document.getElementById('zoneSelectorDropdown').style.display = 'none'
+}
+
+function toggleZoneSelector() {
+    const d = document.getElementById('zoneSelectorDropdown')
+    d.style.display = d.style.display === 'none' ? 'flex' : 'none'
+}
+
+function publierPost() {
+    const content = document.getElementById('postContent').value.trim()
+    if(!content) return
+
+    const nouveau = {
+        id: Date.now(),
+        auteur: 'Vous',
+        avatar: 'VU',
+        tag: typeActif,
+        zone: zoneActif,
+        contenu: content,
+        temps: 'maintenant',
+        likes: 0,
+        liked: false
+    }
+
+    posts.unshift(nouveau)
+    document.getElementById('postContent').value = ''
+    document.getElementById('charCount').textContent = '280'
+    appliquerFiltres()
+}
+
+function likerPost(id, btn) {
+    const post = posts.find(p => p.id === id)
+    if(!post) return
+    post.liked = !post.liked
+    post.likes += post.liked ? 1 : -1
+    appliquerFiltres()
+}
+
+document.getElementById('postContent').addEventListener('input', function() {
+    document.getElementById('charCount').textContent = 280 - this.value.length
+})
+
+// FLOW
+let flowCommOpen = false
+function toggleFlowComm() {
+    flowCommOpen = !flowCommOpen
+    document.getElementById('flowWindowComm').classList.toggle('open', flowCommOpen)
+}
+
+const reponsesFlowComm = {
+    'incident': 'Je vois 2 incidents signales : Deido et Logbassa. Evitez ces zones.',
+    'trafic': 'Deido bloque, Ndokotti modere, Akwa fluide en ce moment.',
+    'alternative': 'Pour eviter Deido, passez par Bonapriso vers Bonanjo. +15 min.',
+    'bonjour': 'Bonjour ! Je surveille les signalements en temps reel.'
+}
+
+function envoyerFlowComm() {
+    const input = document.getElementById('flowInputComm')
+    const messages = document.getElementById('flowMessagesComm')
+    const question = input.value.trim()
+    if(!question) return
+    messages.innerHTML += `<div class="flow-msg-bubble user"><div class="bubble">${question}</div></div>`
+    input.value = ''
+    setTimeout(function() {
+        const cle = Object.keys(reponsesFlowComm).find(function(k) { return question.toLowerCase().includes(k) })
+        const rep = cle ? reponsesFlowComm[cle] : "Consultez les posts de la communaute pour les derniers signalements."
+        messages.innerHTML += `<div class="flow-msg-bubble bot"><div class="bubble">${rep}</div></div>`
+        messages.scrollTop = messages.scrollHeight
+    }, 700)
+}
+
+afficherPosts(posts)
+</script>
+
+</body>
+</html>

@@ -98,6 +98,40 @@ const reponsesFlow = {
     'makepe': 'Makepe : trafic modere. Preferez partir avant 7h30 ou apres 9h.'
 }
 
+// CONNEXION SUPABASE
+const supabaseClient = window.supabase.createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_KEY)
+
+// CHARGER DONNÉES TRAFIC DEPUIS SUPABASE
+async function chargerTrafic() {
+    try {
+        const { data, error } = await supabaseClient
+            .from('trafic')
+            .select('*')
+            .order('timestamp', { ascending: false })
+
+        if(error) return
+
+        // Mettre à jour les cartes de trafic sur index.html
+        const cartes = document.querySelectorAll('.card')
+        if(cartes.length > 0 && data.length > 0) {
+            data.slice(0, 3).forEach((item, i) => {
+                if(cartes[i]) {
+                    cartes[i].querySelector('.card-label').textContent = item.station.toUpperCase()
+                    const val = cartes[i].querySelector('.card-val')
+                    val.textContent = item.niveau.charAt(0).toUpperCase() + item.niveau.slice(1)
+                    val.className = 'card-val ' + (item.niveau === 'fluide' ? 'green' : item.niveau === 'modere' ? 'amber' : 'red')
+                }
+            })
+        }
+    } catch(err) {
+        console.log('Supabase non disponible, donnees simulees utilisees')
+    }
+}
+
+window.addEventListener('load', function() {
+    chargerTrafic()
+})
+
 // ===== FLOW TOGGLE =====
 let isDragging = false
 

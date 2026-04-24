@@ -6,6 +6,8 @@
     <title>TrafficFlow - Carte</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="leaflet.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="config.js"></script>
     <style>
         #map { height: calc(100vh - 65px - 200px); width: 100%; }
         .map-panel { display: flex; height: calc(100vh - 65px); }
@@ -28,6 +30,7 @@
             #map { height: 50vh; }
         }
     </style>
+    <script src="geolocalisation.js"></script>
 </head>
 <body>
 
@@ -295,6 +298,49 @@ function envoyerFlowMap() {
         messages.scrollTop = messages.scrollHeight
     }, 700)
 }
+
+// ===== POSITIONS TEMPS RÉEL =====
+const supabaseClient = window.supabase.createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_KEY)
+let marqueursTrafic = {}
+
+async function chargerPositions() {
+    try {
+        const { data, error } = await supabaseClient
+            .from('positions')
+            .select('*')
+            .gte('timestamp', new Date(Date.now() - 5 * 60 * 1000).toISOString())
+
+        if(error || !data) return
+
+        data.forEach(pos => {
+            if(marqueursTrafic[pos.id]) {
+                marqueursTrafic[pos.id].setLatLng([pos.latitude, pos.longitude])
+            } else {
+                marqueursTrafic[pos.id] = L.circleMarker([pos.latitude, pos.longitude], {
+                    radius: 8,
+                    fillColor: '#E8C4B8',
+                    color: '#1A0A00',
+                    weight: 2,
+                    fillOpacity: 0.8
+                }).addTo(map)
+                marqueursTrafic[pos.id].bindPopup('Utilisateur actif')
+            }
+        })
+    } catch(err) {
+        console.log('Erreur chargement positions:', err)
+    }
+}
+
+// Abonnement temps réel Supabase
+supabaseClient
+    .channel('positions')
+    .on('postgres_changes', { event: '*', schema: 'public', table: 'positions' }, function(payload) {
+        chargerPositions()
+    })
+    .subscribe()
+
+chargerPositions()
+setInterval(chargerPositions, 30000)
 </script>
 
 </body>
