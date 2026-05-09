@@ -142,7 +142,7 @@ function toggleFlow() {
 }
 
 // ===== FLOW ENVOYER =====
-function envoyerFlow() {
+async function envoyerFlow() {
     const input = document.getElementById('flowInput')
     const messages = document.getElementById('flowMessages')
     const question = input.value.trim()
@@ -154,16 +154,24 @@ function envoyerFlow() {
     messages.innerHTML += `<div class="flow-msg-bubble bot" id="flowTyping"><div class="bubble">FLOW analyse...</div></div>`
     messages.scrollTop = messages.scrollHeight
 
-    setTimeout(function() {
-        const cle = Object.keys(reponsesFlow).find(function(k) {
-            return question.toLowerCase().includes(k)
+    try {
+        const response = await fetch('/.netlify/functions/flow', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ question: question })
         })
-        const reponse = cle ? reponsesFlow[cle] : "Je n'ai pas de donnees pour cette requete. Essayez : Akwa, Deido, Ndokotti, Bonanjo, Bessengue."
+
+        const data = await response.json()
         const typing = document.getElementById('flowTyping')
         if(typing) typing.remove()
-        messages.innerHTML += `<div class="flow-msg-bubble bot"><div class="bubble">${reponse}</div></div>`
+        messages.innerHTML += `<div class="flow-msg-bubble bot"><div class="bubble">${data.reponse}</div></div>`
         messages.scrollTop = messages.scrollHeight
-    }, 800)
+
+    } catch(err) {
+        const typing = document.getElementById('flowTyping')
+        if(typing) typing.remove()
+        messages.innerHTML += `<div class="flow-msg-bubble bot"><div class="bubble">Connexion impossible. Reessayez.</div></div>`
+    }
 }
 
 // ===== FLOW DRAGGABLE =====
