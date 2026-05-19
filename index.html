@@ -3,73 +3,447 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TrafficFlow</title>
+    <title>TrafficFlow – Connexion</title>
+    <meta name="description" content="Connectez-vous à TrafficFlow, la plateforme intelligente de gestion du trafic à Douala.">
     <link rel="stylesheet" href="style.css">
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        .auth-page {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #1A0A00 0%, #2C1A0E 50%, #1A0A00 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+        .auth-page::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(ellipse at center, rgba(201,169,110,0.08) 0%, transparent 60%);
+            pointer-events: none;
+        }
+        .auth-card {
+            background: #fff;
+            border-radius: 16px;
+            padding: 48px 40px;
+            width: 100%;
+            max-width: 440px;
+            box-shadow: 0 24px 64px rgba(0,0,0,0.4);
+            position: relative;
+            z-index: 1;
+        }
+        .auth-logo {
+            text-align: center;
+            margin-bottom: 8px;
+        }
+        .auth-logo-text {
+            font-size: 24px;
+            font-weight: 800;
+            color: #1A0A00;
+            letter-spacing: 3px;
+        }
+        .auth-logo-tag {
+            font-size: 11px;
+            color: #C9A96E;
+            letter-spacing: 2px;
+            margin-top: 4px;
+        }
+        .auth-divider {
+            width: 40px;
+            height: 3px;
+            background: #C9A96E;
+            margin: 16px auto 24px;
+            border-radius: 2px;
+        }
+        .auth-tabs {
+            display: flex;
+            border-bottom: 1px solid #E0E0E0;
+            margin-bottom: 28px;
+        }
+        .auth-tab {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            background: none;
+            font-size: 13px;
+            font-weight: 700;
+            color: #999;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            letter-spacing: 1px;
+            transition: all 0.2s;
+        }
+        .auth-tab.active {
+            color: #1A0A00;
+            border-bottom-color: #C9A96E;
+        }
+        .form-group {
+            margin-bottom: 18px;
+        }
+        .form-label {
+            display: block;
+            font-size: 11px;
+            font-weight: 700;
+            color: #666;
+            margin-bottom: 6px;
+            letter-spacing: 1px;
+        }
+        .form-input {
+            width: 100%;
+            padding: 13px 16px;
+            border: 1.5px solid #E0E0E0;
+            border-radius: 8px;
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.2s;
+            font-family: inherit;
+        }
+        .form-input:focus { border-color: #C9A96E; }
+        .password-wrapper { position: relative; }
+        .password-wrapper .form-input { padding-right: 44px; }
+        .toggle-password {
+            position: absolute;
+            right: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            font-size: 16px;
+            user-select: none;
+        }
+        .strength-bar {
+            height: 4px;
+            background: #E0E0E0;
+            border-radius: 2px;
+            margin-top: 6px;
+            overflow: hidden;
+        }
+        .strength-fill {
+            height: 100%;
+            width: 0%;
+            border-radius: 2px;
+            transition: all 0.3s;
+        }
+        .strength-text {
+            font-size: 11px;
+            color: #999;
+            margin-top: 4px;
+        }
+        .form-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .form-check {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: #666;
+            cursor: pointer;
+        }
+        .form-check input { cursor: pointer; accent-color: #C9A96E; }
+        .forgot-link {
+            font-size: 13px;
+            color: #C9A96E;
+            text-decoration: none;
+        }
+        .forgot-link:hover { text-decoration: underline; }
+        .consent-box {
+            background: #F7F7F7;
+            border-radius: 8px;
+            padding: 14px;
+            margin-bottom: 20px;
+            border: 0.5px solid #E0E0E0;
+        }
+        .consent-box label {
+            display: flex;
+            gap: 10px;
+            align-items: flex-start;
+            font-size: 12px;
+            color: #444;
+            line-height: 1.5;
+            cursor: pointer;
+        }
+        .consent-box input { margin-top: 2px; flex-shrink: 0; accent-color: #C9A96E; }
+        .consent-box a { color: #C9A96E; text-decoration: none; }
+        .consent-box a:hover { text-decoration: underline; }
+        .btn-primary {
+            width: 100%;
+            padding: 15px;
+            background: #1A0A00;
+            color: #C9A96E;
+            border: 1px solid #C9A96E;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-bottom: 16px;
+        }
+        .btn-primary:hover { background: #C9A96E; color: #1A0A00; }
+        .social-divider {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+            font-size: 12px;
+            color: #999;
+        }
+        .social-divider::before,
+        .social-divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: #E0E0E0;
+        }
+        .social-login {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        .btn-social {
+            flex: 1;
+            padding: 11px;
+            border: 1.5px solid #E0E0E0;
+            border-radius: 8px;
+            background: #fff;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        .btn-social:hover { border-color: #C9A96E; background: #FFF8EE; }
+        .auth-security {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            font-size: 11px;
+            color: #999;
+        }
+        .form-error {
+            font-size: 12px;
+            color: #A00000;
+            margin-top: 4px;
+            min-height: 16px;
+        }
+        /* MODAL CONFIDENTIALITÉ */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-overlay.open { display: flex; }
+        .modal-box {
+            background: #fff;
+            border-radius: 12px;
+            padding: 32px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        .modal-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            color: #1A0A00;
+        }
+        .modal-text {
+            font-size: 13px;
+            color: #444;
+            line-height: 1.7;
+            margin-bottom: 12px;
+        }
+        .modal-close {
+            padding: 12px 32px;
+            background: #1A0A00;
+            color: #C9A96E;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 13px;
+        }
+        @media(max-width: 480px) {
+            .auth-card { padding: 32px 20px; }
+        }
+    </style>
 </head>
 <body>
 
-<nav class="navbar">
-    <div class="nav-logo">TRAFFICFLOW</div>
-    <div class="nav-links">
-        <a href="index.html" class="nav-link active">Accueil</a>
-        <a href="map.html" class="nav-link">Carte</a>
-        <a href="dashboard.html" class="nav-link">Dashboard</a>
-        <a href="statistiques.html" class="nav-link">Statistiques</a>
-        <a href="communaute.html" class="nav-link">Communauté</a>
-        <a href="connexion.html" class="nav-link">Connexion</a>
-    </div>
-</nav>
+<div class="auth-page">
+    <div class="auth-card">
 
-<section class="hero">
-    <p class="hero-tag">INTELLIGENCE · ÉLÉGANCE · DOUALA</p>
-    <div class="hero-line"></div>
-    <h1 class="hero-title">Navigue avec <span>raffinement</span><br>dans ta ville</h1>
-    <p class="hero-sub">FLOW analyse le trafic en temps réel, pour toi</p>
-    <a href="dashboard.html" class="hero-btn">DÉCOUVRIR LE DASHBOARD</a>
-</section>
+        <div class="auth-logo">
+            <div class="auth-logo-text">TRAFFICFLOW</div>
+            <div class="auth-logo-tag">INTELLIGENCE · DOUALA</div>
+        </div>
+        <div class="auth-divider"></div>
 
-<section class="traffic-cards">
-    <div class="card">
-        <div class="card-label">AKWA → BONANJO</div>
-        <div class="card-val green">Fluide</div>
-    </div>
-    <div class="card">
-        <div class="card-label">NDOKOTTI</div>
-        <div class="card-val amber">Modéré</div>
-    </div>
-    <div class="card">
-        <div class="card-label">DEIDO</div>
-        <div class="card-val red">Bloqué</div>
-    </div>
-</section>
+        <div class="auth-tabs">
+            <button class="auth-tab active" onclick="switchTab('connexion', this)">CONNEXION</button>
+            <button class="auth-tab" onclick="switchTab('inscription', this)">INSCRIPTION</button>
+        </div>
 
-<section class="info-strip">
-    <div class="info-box">
-        <div class="info-lbl">ITINÉRAIRE OPTIMAL</div>
-        <div class="info-val">18 min</div>
-        <div class="info-sub">Akwa → Logbassa</div>
-    </div>
-    <div class="info-box">
-        <div class="info-lbl">PROCHAINE ALERTE</div>
-        <div class="info-val">17h30</div>
-        <div class="info-sub">Rond-point Deido</div>
-    </div>
-    <div class="info-box">
-        <div class="info-lbl">AXES SURVEILLÉS</div>
-        <div class="info-val">12</div>
-        <div class="info-sub">En temps réel</div>
-    </div>
-</section>
+        <!-- CONNEXION -->
+        <div id="form-connexion">
+            <div class="form-group">
+                <label class="form-label">EMAIL OU TÉLÉPHONE</label>
+                <input type="email" class="form-input" id="login-email" placeholder="vous@exemple.com">
+                <div class="form-error" id="err-login-email"></div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">MOT DE PASSE</label>
+                <div class="password-wrapper">
+                    <input type="password" class="form-input" id="login-password" placeholder="••••••••">
+                    <span class="toggle-password" onclick="togglePwd('login-password')">👁</span>
+                </div>
+                <div class="form-error" id="err-login-password"></div>
+            </div>
+            <div class="form-row">
+                <label class="form-check">
+                    <input type="checkbox" id="remember"> Se souvenir de moi
+                </label>
+                <a href="#" class="forgot-link">Mot de passe oublié ?</a>
+            </div>
+            <button class="btn-primary" onclick="seConnecter()">SE CONNECTER</button>
+            <div class="social-divider">ou continuer avec</div>
+            <div class="social-login">
+                <button class="btn-social">🇬 Google</button>
+                <button class="btn-social"> Apple</button>
+            </div>
+            <div class="auth-security">🔒 Connexion sécurisée SSL</div>
+        </div>
 
-<section class="flow-bar">
-    <div class="flow-avatar">FL</div>
-    <div class="flow-bubble">Bonjour ! Je suis <strong>FLOW</strong>. Comment puis-je t'aider à naviguer aujourd'hui ?</div>
-</section>
+        <!-- INSCRIPTION -->
+        <div id="form-inscription" style="display:none;">
+            <div class="form-group">
+                <label class="form-label">NOM COMPLET</label>
+                <input type="text" class="form-input" id="reg-nom" placeholder="Boris Lionel">
+                <div class="form-error" id="err-reg-nom"></div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">EMAIL</label>
+                <input type="email" class="form-input" id="reg-email" placeholder="vous@exemple.com">
+                <div class="form-error" id="err-reg-email"></div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">MOT DE PASSE</label>
+                <div class="password-wrapper">
+                    <input type="password" class="form-input" id="reg-password" placeholder="Min. 8 caractères" oninput="checkStrength(this.value)">
+                    <span class="toggle-password" onclick="togglePwd('reg-password')">👁</span>
+                </div>
+                <div class="strength-bar"><div class="strength-fill" id="strength-fill"></div></div>
+                <div class="strength-text" id="strength-text"></div>
+                <div class="form-error" id="err-reg-password"></div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">RÉGION</label>
+                <select class="form-input" id="reg-region">
+                    <option value="">Sélectionnez votre zone</option>
+                    <option>Akwa</option>
+                    <option>Bonanjo</option>
+                    <option>Deido</option>
+                    <option>Ndokotti</option>
+                    <option>Bessengue</option>
+                    <option>Bonapriso</option>
+                    <option>Makepe</option>
+                    <option>Autre</option>
+                </select>
+            </div>
+            <div class="consent-box">
+                <label>
+                    <input type="checkbox" id="consent" required>
+                    <span>J'ai lu et j'accepte la <a href="#" onclick="openModal()">Politique de Confidentialité</a> et les <a href="#" onclick="openModal()">CGU</a>. TrafficFlow collecte mes données uniquement pour optimiser mes trajets.</span>
+                </label>
+            </div>
+            <button class="btn-primary" onclick="sInscrire()">CRÉER MON COMPTE</button>
+            <div class="auth-security">🔒 Vos données sont sécurisées</div>
+        </div>
 
-<footer>
-    © 2025-2026 <span>TrafficFlow</span> · IUT de Douala · Projet académique groupe 23
-</footer>
+    </div>
+</div>
+
+<!-- MODAL CONFIDENTIALITÉ -->
+<div class="modal-overlay" id="modalPrivacy">
+    <div class="modal-box">
+        <div class="modal-title">Politique de Confidentialité</div>
+        <div class="modal-text">TrafficFlow collecte et traite vos données personnelles (email, localisation, itinéraires) dans le but exclusif de fournir un service d'optimisation de trajets et d'analyse de trafic urbain à Douala.</div>
+        <div class="modal-text">Vos données sont sécurisées, ne sont jamais revendues à des tiers, et vous pouvez les supprimer à tout moment depuis vos paramètres.</div>
+        <div class="modal-text">Projet académique — IUT de Douala, Groupe 23. © 2025-2026 TrafficFlow.</div>
+        <button class="modal-close" onclick="closeModal()">FERMER</button>
+    </div>
+</div>
+
+<script>
+function switchTab(tab, btn) {
+    document.getElementById('form-connexion').style.display = tab === 'connexion' ? 'block' : 'none';
+    document.getElementById('form-inscription').style.display = tab === 'inscription' ? 'block' : 'none';
+    document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
+}
+
+function togglePwd(id) {
+    const input = document.getElementById(id);
+    input.type = input.type === 'password' ? 'text' : 'password';
+}
+
+function checkStrength(val) {
+    const fill = document.getElementById('strength-fill');
+    const text = document.getElementById('strength-text');
+    if(val.length === 0) { fill.style.width = '0%'; text.textContent = ''; return; }
+    if(val.length < 6) { fill.style.width = '25%'; fill.style.background = '#A00000'; text.textContent = 'Faible'; text.style.color = '#A00000'; return; }
+    if(val.length < 10) { fill.style.width = '60%'; fill.style.background = '#8B6400'; text.textContent = 'Moyen'; text.style.color = '#8B6400'; return; }
+    fill.style.width = '100%'; fill.style.background = '#1A6640'; text.textContent = 'Fort'; text.style.color = '#1A6640';
+}
+
+function seConnecter() {
+    const email = document.getElementById('login-email').value;
+    const password = document.getElementById('login-password').value;
+    document.getElementById('err-login-email').textContent = '';
+    document.getElementById('err-login-password').textContent = '';
+    let valid = true;
+    if(!email) { document.getElementById('err-login-email').textContent = 'Email requis'; valid = false; }
+    if(!password) { document.getElementById('err-login-password').textContent = 'Mot de passe requis'; valid = false; }
+    if(valid) window.location.href = 'index.html';
+}
+
+function sInscrire() {
+    const nom = document.getElementById('reg-nom').value;
+    const email = document.getElementById('reg-email').value;
+    const password = document.getElementById('reg-password').value;
+    const consent = document.getElementById('consent').checked;
+    document.getElementById('err-reg-nom').textContent = '';
+    document.getElementById('err-reg-email').textContent = '';
+    document.getElementById('err-reg-password').textContent = '';
+    let valid = true;
+    if(!nom) { document.getElementById('err-reg-nom').textContent = 'Nom requis'; valid = false; }
+    if(!email) { document.getElementById('err-reg-email').textContent = 'Email requis'; valid = false; }
+    if(password.length < 8) { document.getElementById('err-reg-password').textContent = 'Min. 8 caractères'; valid = false; }
+    if(!consent) { alert('Veuillez accepter la politique de confidentialité'); valid = false; }
+    if(valid) window.location.href = 'index.html';
+}
+
+function openModal() { document.getElementById('modalPrivacy').classList.add('open'); }
+function closeModal() { document.getElementById('modalPrivacy').classList.remove('open'); }
+</script>
 
 </body>
 </html>
