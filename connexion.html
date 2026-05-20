@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TrafficFlow - Connexion</title>
     <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="config.js"></script>
 </head>
 <body>
 
@@ -176,31 +178,48 @@ function checkPasswordStrength(val) {
     bar.style.width = '100%'; bar.style.background = '#1A6640'; text.textContent = 'Fort'; text.style.color = '#1A6640'
 }
 
-function seConnecter() {
+const sb = window.supabase.createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_KEY)
+
+async function seConnecter() {
     const email = document.getElementById('login-email').value
     const password = document.getElementById('login-password').value
-    let valid = true
-    document.getElementById('error-login-email').textContent = ''
-    document.getElementById('error-login-password').textContent = ''
-    if(!email) { document.getElementById('error-login-email').textContent = 'Email requis'; valid = false }
-    if(!password) { document.getElementById('error-login-password').textContent = 'Mot de passe requis'; valid = false }
-    if(valid) window.location.href = 'dashboard.html'
+    document.getElementById('err-login-email').textContent = ''
+    document.getElementById('err-login-password').textContent = ''
+    if(!email) { document.getElementById('err-login-email').textContent = 'Email requis'; return }
+    if(!password) { document.getElementById('err-login-password').textContent = 'Mot de passe requis'; return }
+    
+    const { data, error } = await sb.auth.signInWithPassword({ email, password })
+    if(error) {
+        document.getElementById('err-login-email').textContent = 'Email ou mot de passe incorrect'
+    } else {
+        window.location.href = 'index.html'
+    }
 }
 
-function sInscrire() {
+async function sInscrire() {
     const nom = document.getElementById('reg-nom').value
     const email = document.getElementById('reg-email').value
     const password = document.getElementById('reg-password').value
     const consent = document.getElementById('consent').checked
-    let valid = true
-    document.getElementById('error-reg-nom').textContent = ''
-    document.getElementById('error-reg-email').textContent = ''
-    document.getElementById('error-reg-password').textContent = ''
-    if(!nom) { document.getElementById('error-reg-nom').textContent = 'Nom requis'; valid = false }
-    if(!email) { document.getElementById('error-reg-email').textContent = 'Email requis'; valid = false }
-    if(password.length < 8) { document.getElementById('error-reg-password').textContent = 'Min. 8 caractères'; valid = false }
-    if(!consent) { alert('Veuillez accepter la politique de confidentialité'); valid = false }
-    if(valid) window.location.href = 'dashboard.html'
+    document.getElementById('err-reg-nom').textContent = ''
+    document.getElementById('err-reg-email').textContent = ''
+    document.getElementById('err-reg-password').textContent = ''
+    if(!nom) { document.getElementById('err-reg-nom').textContent = 'Nom requis'; return }
+    if(!email) { document.getElementById('err-reg-email').textContent = 'Email requis'; return }
+    if(password.length < 8) { document.getElementById('err-reg-password').textContent = 'Min. 8 caracteres'; return }
+    if(!consent) { alert('Acceptez la politique de confidentialite'); return }
+
+    const { data, error } = await sb.auth.signUp({
+        email,
+        password,
+        options: { data: { nom } }
+    })
+    if(error) {
+        document.getElementById('err-reg-email').textContent = error.message
+    } else {
+        alert('Compte cree ! Verifiez votre email pour confirmer.')
+        switchTab('connexion', document.querySelector('.auth-tab'))
+    }
 }
 
 function showPrivacy() {
