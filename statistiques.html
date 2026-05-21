@@ -6,7 +6,12 @@
     <title>TrafficFlow - Statistiques</title>
     <link rel="stylesheet" href="style.css">
     <script src="chartjs.min.js"></script>
-    <script src="config.js"></script>
+    <script>
+    const CONFIG = {
+        SUPABASE_URL: 'https://ctntssmflnwfbqykpxau.supabase.co',
+        SUPABASE_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN0bnRzc21mbG53ZmJxeWtweGF1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY1NTExNzcsImV4cCI6MjA5MjEyNzE3N30.zsSPzHXIOv_oVv5gTIWvuthZw7ZlcXrVzGxDfQh3wLk'
+}
+</script>
     <style>
         .stats-container { max-width: 900px; margin: 0 auto; padding: 32px 24px; }
         .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 32px; }
