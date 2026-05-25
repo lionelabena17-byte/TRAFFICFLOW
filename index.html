@@ -495,13 +495,15 @@ updateTime()
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
       navigator.serviceWorker.register('/sw.js')
-        .then(registration => {
-          console.log('✅ Service Worker enregistré avec succès !', registration);
+        .then(reg => {
+          console.log('✅ Service Worker enregistré !', reg);
         })
-        .catch(error => {
-          console.log('❌ Échec de l\'enregistrement du Service Worker :', error);
+        .catch(err => {
+          console.error('❌ Erreur Service Worker :', err);
         });
     });
+  } else {
+    console.log('Service Worker non supporté sur ce navigateur');
   }
 </script>
 

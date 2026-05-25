@@ -132,105 +132,102 @@ window.addEventListener('load', function() {
     chargerTrafic()
 })
 
-// ===== FLOW TOGGLE =====
+let flowOpen = false
+let flowMessages = []
 let isDragging = false
+let dragOffset = { x: 0, y: 0 }
 
-function toggleFlow() {
-    if(isDragging) return
-    const win = document.getElementById('flowWindow')
-    win.classList.toggle('open')
+const flowResponses = {
+    'akwa': 'Akwa est généralement fluide le matin. Vérifiez la carte en temps réel pour l\'heure actuelle.',
+    'deido': '⚠️ Deido connaît souvent des embouteillages entre 17h-19h. Évitez cette zone à ces heures.',
+    'trafic': 'Le trafic est actuellement modéré à Douala. Les axes principaux sont surveillés en direct.',
+    'incident': 'Aucun incident majeur signalé pour l\'instant. Consultez la communauté pour les alertes locales.',
+    'itineraire': 'Utilisez la carte pour planifier votre itinéraire optimal. FLOW vous propose le meilleur chemin.',
+    'bonjour': 'Bonjour ! Je suis FLOW, assistant IA de TrafficFlow. Comment puis-je vous aider ?',
+    'aide': 'Je peux vous aider sur : le trafic à Douala, les itinéraires, les zones embouteillées, incidents. Posez votre question !',
+    'default': 'Je comprends votre question. Consultez la carte en direct ou les statistiques pour plus de détails.'
 }
 
-// ===== FLOW ENVOYER =====
-async function envoyerFlow() {
+function toggleFlow() {
+    flowOpen = !flowOpen
+    const win = document.getElementById('flowWindow')
+    if(win) {
+        win.classList.toggle('open', flowOpen)
+        if(flowOpen) document.getElementById('flowInput').focus()
+    }
+}
+
+function envoyerFlow() {
     const input = document.getElementById('flowInput')
     const messages = document.getElementById('flowMessages')
     const question = input.value.trim()
     if(!question) return
 
+    flowMessages.push({ role: 'user', text: question })
     messages.innerHTML += `<div class="flow-msg-bubble user"><div class="bubble">${question}</div></div>`
     input.value = ''
-
-    messages.innerHTML += `<div class="flow-msg-bubble bot" id="flowTyping"><div class="bubble">FLOW analyse...</div></div>`
     messages.scrollTop = messages.scrollHeight
 
-    try {
-        const response = await fetch('/.netlify/functions/flow', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ question: question })
-        })
+    setTimeout(() => {
+        const q = question.toLowerCase()
+        const cle = Object.keys(flowResponses).find(k => q.includes(k))
+        const reponse = flowResponses[cle] || flowResponses.default
 
-        const data = await response.json()
-        const typing = document.getElementById('flowTyping')
-        if(typing) typing.remove()
-        messages.innerHTML += `<div class="flow-msg-bubble bot"><div class="bubble">${data.reponse}</div></div>`
+        flowMessages.push({ role: 'bot', text: reponse })
+        messages.innerHTML += `<div class="flow-msg-bubble bot"><div class="bubble">${reponse}</div></div>`
         messages.scrollTop = messages.scrollHeight
-
-    } catch(err) {
-        const typing = document.getElementById('flowTyping')
-        if(typing) typing.remove()
-        messages.innerHTML += `<div class="flow-msg-bubble bot"><div class="bubble">Connexion impossible. Reessayez.</div></div>`
-    }
+    }, 700)
 }
 
-// ===== FLOW DRAGGABLE =====
-window.addEventListener('load', function() {
-    const btn = document.querySelector('.flow-btn')
-    if(!btn) return
+// DRAG & DROP FLOW
+document.addEventListener('mousedown', function(e) {
+    const header = document.querySelector('.flow-window-header')
+    if(!header || !header.contains(e.target)) return
+    isDragging = true
+    const win = document.getElementById('flowWindow')
+    const rect = win.getBoundingClientRect()
+    dragOffset.x = e.clientX - rect.left
+    dragOffset.y = e.clientY - rect.top
+})
 
-    let startX, startY, startLeft, startTop
+document.addEventListener('mousemove', function(e) {
+    if(!isDragging) return
+    const win = document.getElementById('flowWindow')
+    const x = e.clientX - dragOffset.x
+    const y = e.clientY - dragOffset.y
+    win.style.position = 'fixed'
+    win.style.left = x + 'px'
+    win.style.top = y + 'px'
+})
 
-    btn.addEventListener('mousedown', function(e) {
-        isDragging = false
-        const rect = btn.getBoundingClientRect()
-        startX = e.clientX
-        startY = e.clientY
-        startLeft = rect.left
-        startTop = rect.top
-        btn.style.right = 'auto'
-        btn.style.bottom = 'auto'
-        btn.style.left = startLeft + 'px'
-        btn.style.top = startTop + 'px'
-        document.addEventListener('mousemove', onDrag)
-        document.addEventListener('mouseup', stopDrag)
-        e.preventDefault()
-    })
+document.addEventListener('mouseup', function() {
+    isDragging = false
+})
 
-    function onDrag(e) {
-        const dx = e.clientX - startX
-        const dy = e.clientY - startY
-        if(Math.abs(dx) > 5 || Math.abs(dy) > 5) isDragging = true
-        if(isDragging) {
-            btn.style.left = (startLeft + dx) + 'px'
-            btn.style.top = (startTop + dy) + 'px'
-        }
-    }
+// TOUCH DRAG (mobile)
+let touchStart = { x: 0, y: 0 }
+document.addEventListener('touchstart', function(e) {
+    const header = document.querySelector('.flow-window-header')
+    if(!header || !header.contains(e.target)) return
+    isDragging = true
+    const win = document.getElementById('flowWindow')
+    const rect = win.getBoundingClientRect()
+    touchStart.x = e.touches[0].clientX - rect.left
+    touchStart.y = e.touches[0].clientY - rect.top
+}, { passive: true })
 
-    function stopDrag() {
-        document.removeEventListener('mousemove', onDrag)
-        document.removeEventListener('mouseup', stopDrag)
-    }
+document.addEventListener('touchmove', function(e) {
+    if(!isDragging) return
+    const win = document.getElementById('flowWindow')
+    const x = e.touches[0].clientX - touchStart.x
+    const y = e.touches[0].clientY - touchStart.y
+    win.style.position = 'fixed'
+    win.style.left = x + 'px'
+    win.style.top = y + 'px'
+}, { passive: true })
 
-    btn.addEventListener('touchstart', function(e) {
-        const touch = e.touches[0]
-        const rect = btn.getBoundingClientRect()
-        startX = touch.clientX
-        startY = touch.clientY
-        startLeft = rect.left
-        startTop = rect.top
-        btn.style.right = 'auto'
-        btn.style.bottom = 'auto'
-        btn.style.left = startLeft + 'px'
-        btn.style.top = startTop + 'px'
-    }, { passive: true })
-
-    btn.addEventListener('touchmove', function(e) {
-        const touch = e.touches[0]
-        btn.style.left = (touch.clientX - startX + startLeft) + 'px'
-        btn.style.top = (touch.clientY - startY + startTop) + 'px'
-        e.preventDefault()
-    }, { passive: false })
+document.addEventListener('touchend', function() {
+    isDragging = false
 })
 
 // ===== FILTRES =====

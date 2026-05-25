@@ -12,6 +12,8 @@
         SUPABASE_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN0bnRzc21mbG53ZmJxeWtweGF1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY1NTExNzcsImV4cCI6MjA5MjEyNzE3N30.zsSPzHXIOv_oVv5gTIWvuthZw7ZlcXrVzGxDfQh3wLk'
 }
 </script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="auth.js"></script>
 </head>
 <body>
 
@@ -193,7 +195,7 @@ async function seConnecter() {
     if(!email) { document.getElementById('err-login-email').textContent = 'Email requis'; return }
     if(!password) { document.getElementById('err-login-password').textContent = 'Mot de passe requis'; return }
     
-    const { data, error } = await sb.auth.signInWithPassword({ email, password })
+    const { data, error } = await login(email, password)
     if(error) {
         document.getElementById('err-login-email').textContent = 'Email ou mot de passe incorrect'
     } else {
@@ -211,18 +213,17 @@ async function sInscrire() {
     document.getElementById('err-reg-password').textContent = ''
     if(!nom) { document.getElementById('err-reg-nom').textContent = 'Nom requis'; return }
     if(!email) { document.getElementById('err-reg-email').textContent = 'Email requis'; return }
-    if(password.length < 8) { document.getElementById('err-reg-password').textContent = 'Min. 8 caracteres'; return }
-    if(!consent) { alert('Acceptez la politique de confidentialite'); return }
+    if(password.length < 8) { document.getElementById('err-reg-password').textContent = 'Min. 8 caractères'; return }
+    if(!consent) { alert('Acceptez la politique de confidentialité'); return }
 
-    const { data, error } = await sb.auth.signUp({
-        email,
-        password,
-        options: { data: { nom } }
-    })
+    const { data, error } = await signup(email, password, nom)
     if(error) {
         document.getElementById('err-reg-email').textContent = error.message
     } else {
-        alert('Compte cree ! Verifiez votre email pour confirmer.')
+        alert('Compte créé ! Vérifiez votre email.')
+        document.getElementById('reg-nom').value = ''
+        document.getElementById('reg-email').value = ''
+        document.getElementById('reg-password').value = ''
         switchTab('connexion', document.querySelector('.auth-tab'))
     }
 }
