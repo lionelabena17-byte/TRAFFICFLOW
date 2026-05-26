@@ -83,69 +83,25 @@ if(ctxTypes) {
     })
 }
 
-// ===== REPONSES FLOW =====
-const reponsesFlow = {
-    'ndokotti': 'Trafic modere a Ndokotti. Temps estime : 28 min depuis Akwa. Passez par le Boulevard de la Liberte.',
-    'akwa': 'Akwa est fluide en ce moment. Vitesse moyenne : 35 km/h. Bon moment pour circuler.',
-    'deido': 'Attention ! Deido est fortement congestionne. Temps attente : 35 min. Evitez avant 19h.',
-    'bonanjo': 'Bonanjo est accessible. Trafic fluide sur axe principal. Duree depuis Akwa : 12 min.',
-    'bessengue': 'Bessengue est la station la plus chargee avec 45% du volume total. Heure de pointe : 18h15.',
-    'trafic': 'Situation globale : 3 axes fluides, 2 moderes, 1 bloque. Pic prevu a 18h30 sur Deido.',
-    'bonjour': 'Bonjour ! Je suis FLOW, votre assistant trafic a Douala. Posez-moi une question.',
-    'itineraire': 'Pour un itineraire, precisez depart et destination. Ex : Akwa vers Logbassa.',
-    'logbassa': 'Logbassa : trafic fluide. Excellent moment pour y aller. Duree depuis Akwa : 18 min.',
-    'bonapriso': 'Bonapriso : fluide. Trajet court depuis Akwa, environ 8 minutes.',
-    'makepe': 'Makepe : trafic modere. Preferez partir avant 7h30 ou apres 9h.'
-}
-
-// CONNEXION SUPABASE
-const supabaseClient = window.supabase.createClient(CONFIG.SUPABASE_URL, CONFIG.SUPABASE_KEY)
-
-// CHARGER DONNÉES TRAFIC DEPUIS SUPABASE
-async function chargerTrafic() {
-    try {
-        const { data, error } = await supabaseClient
-            .from('trafic')
-            .select('*')
-            .order('timestamp', { ascending: false })
-
-        if(error) return
-
-        // Mettre à jour les cartes de trafic sur index.html
-        const cartes = document.querySelectorAll('.card')
-        if(cartes.length > 0 && data.length > 0) {
-            data.slice(0, 3).forEach((item, i) => {
-                if(cartes[i]) {
-                    cartes[i].querySelector('.card-label').textContent = item.station.toUpperCase()
-                    const val = cartes[i].querySelector('.card-val')
-                    val.textContent = item.niveau.charAt(0).toUpperCase() + item.niveau.slice(1)
-                    val.className = 'card-val ' + (item.niveau === 'fluide' ? 'green' : item.niveau === 'modere' ? 'amber' : 'red')
-                }
-            })
-        }
-    } catch(err) {
-        console.log('Supabase non disponible, donnees simulees utilisees')
-    }
-}
-
-window.addEventListener('load', function() {
-    chargerTrafic()
-})
-
+// ===== FLOW =====
 let flowOpen = false
-let flowMessages = []
 let isDragging = false
 let dragOffset = { x: 0, y: 0 }
 
 const flowResponses = {
-    'akwa': 'Akwa est généralement fluide le matin. Vérifiez la carte en temps réel pour l\'heure actuelle.',
-    'deido': '⚠️ Deido connaît souvent des embouteillages entre 17h-19h. Évitez cette zone à ces heures.',
-    'trafic': 'Le trafic est actuellement modéré à Douala. Les axes principaux sont surveillés en direct.',
-    'incident': 'Aucun incident majeur signalé pour l\'instant. Consultez la communauté pour les alertes locales.',
-    'itineraire': 'Utilisez la carte pour planifier votre itinéraire optimal. FLOW vous propose le meilleur chemin.',
-    'bonjour': 'Bonjour ! Je suis FLOW, assistant IA de TrafficFlow. Comment puis-je vous aider ?',
-    'aide': 'Je peux vous aider sur : le trafic à Douala, les itinéraires, les zones embouteillées, incidents. Posez votre question !',
-    'default': 'Je comprends votre question. Consultez la carte en direct ou les statistiques pour plus de détails.'
+    'ndokotti': 'Trafic modéré à Ndokotti. Temps estimé: 28 min depuis Akwa.',
+    'akwa': 'Akwa est fluide. Vitesse moyenne: 35 km/h.',
+    'deido': '⚠️ Deido congestionné. Évitez avant 19h.',
+    'bonanjo': 'Bonanjo fluide. Durée depuis Akwa: 12 min.',
+    'bessengue': 'Bessengue est chargée. Heure de pointe: 18h15.',
+    'trafic': 'Situation globale: 3 axes fluides, 2 modérés, 1 bloqué.',
+    'bonjour': 'Bonjour! Je suis FLOW, assistant IA de TrafficFlow.',
+    'itineraire': 'Pour un itinéraire, précisez départ et destination.',
+    'logbassa': 'Logbassa fluide. Durée depuis Akwa: 18 min.',
+    'bonapriso': 'Bonapriso fluide. Durée: 8 minutes.',
+    'makepe': 'Makepe modéré. Partez avant 7h30 ou après 9h.',
+    'aide': 'Je peux vous aider sur le trafic, itinéraires, incidents.',
+    'default': 'Consultez la carte en direct ou les statistiques.'
 }
 
 function toggleFlow() {
@@ -163,7 +119,6 @@ function envoyerFlow() {
     const question = input.value.trim()
     if(!question) return
 
-    flowMessages.push({ role: 'user', text: question })
     messages.innerHTML += `<div class="flow-msg-bubble user"><div class="bubble">${question}</div></div>`
     input.value = ''
     messages.scrollTop = messages.scrollHeight
@@ -172,15 +127,13 @@ function envoyerFlow() {
         const q = question.toLowerCase()
         const cle = Object.keys(flowResponses).find(k => q.includes(k))
         const reponse = flowResponses[cle] || flowResponses.default
-
-        flowMessages.push({ role: 'bot', text: reponse })
         messages.innerHTML += `<div class="flow-msg-bubble bot"><div class="bubble">${reponse}</div></div>`
         messages.scrollTop = messages.scrollHeight
     }, 700)
 }
 
-// DRAG & DROP FLOW
-document.addEventListener('mousedown', function(e) {
+// DRAG FLOW
+document.addEventListener('mousedown', e => {
     const header = document.querySelector('.flow-window-header')
     if(!header || !header.contains(e.target)) return
     isDragging = true
@@ -190,23 +143,19 @@ document.addEventListener('mousedown', function(e) {
     dragOffset.y = e.clientY - rect.top
 })
 
-document.addEventListener('mousemove', function(e) {
+document.addEventListener('mousemove', e => {
     if(!isDragging) return
     const win = document.getElementById('flowWindow')
-    const x = e.clientX - dragOffset.x
-    const y = e.clientY - dragOffset.y
     win.style.position = 'fixed'
-    win.style.left = x + 'px'
-    win.style.top = y + 'px'
+    win.style.left = (e.clientX - dragOffset.x) + 'px'
+    win.style.top = (e.clientY - dragOffset.y) + 'px'
 })
 
-document.addEventListener('mouseup', function() {
-    isDragging = false
-})
+document.addEventListener('mouseup', () => { isDragging = false })
 
-// TOUCH DRAG (mobile)
+// TOUCH DRAG
 let touchStart = { x: 0, y: 0 }
-document.addEventListener('touchstart', function(e) {
+document.addEventListener('touchstart', e => {
     const header = document.querySelector('.flow-window-header')
     if(!header || !header.contains(e.target)) return
     isDragging = true
@@ -216,22 +165,18 @@ document.addEventListener('touchstart', function(e) {
     touchStart.y = e.touches[0].clientY - rect.top
 }, { passive: true })
 
-document.addEventListener('touchmove', function(e) {
+document.addEventListener('touchmove', e => {
     if(!isDragging) return
     const win = document.getElementById('flowWindow')
-    const x = e.touches[0].clientX - touchStart.x
-    const y = e.touches[0].clientY - touchStart.y
     win.style.position = 'fixed'
-    win.style.left = x + 'px'
-    win.style.top = y + 'px'
+    win.style.left = (e.touches[0].clientX - touchStart.x) + 'px'
+    win.style.top = (e.touches[0].clientY - touchStart.y) + 'px'
 }, { passive: true })
 
-document.addEventListener('touchend', function() {
-    isDragging = false
-})
+document.addEventListener('touchend', () => { isDragging = false })
 
 // ===== FILTRES =====
 function appliquerFiltres() {
     const station = document.getElementById('station').value
-    alert(`Filtres appliques pour : ${station}`)
+    alert(`Filtres appliqués pour: ${station}`)
 }
