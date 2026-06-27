@@ -3,16 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TrafficFlow - Communauté</title>
-    <link rel="stylesheet" href="style.css">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="config.js"></script>
     <script src="auth.js"></script>
-    <script>
-    const CONFIG = {
-        SUPABASE_URL: 'https://ctntssmflnwfbqykpxau.supabase.co',
-        SUPABASE_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImN0bnRzc21mbG53ZmJxeWtweGF1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzY1NTExNzcsImV4cCI6MjA5MjEyNzE3N30.zsSPzHXIOv_oVv5gTIWvuthZw7ZlcXrVzGxDfQh3wLk'
-}
-</script>
+    <title>Communauté - TrafficFlow</title>
+    <link rel="stylesheet" href="style.css">
     <style>
         .comm-container { max-width: 680px; margin: 0 auto; padding: 0; }
         
@@ -90,10 +85,8 @@
     <div class="nav-links">
         <a href="index.html" class="nav-link">Accueil</a>
         <a href="map.html" class="nav-link">Carte</a>
-        <a href="dashboard.html" class="nav-link">Dashboard</a>
         <a href="statistiques.html" class="nav-link">Statistiques</a>
         <a href="communaute.html" class="nav-link active">Communauté</a>
-        <a href="connexion.html" class="nav-link">Connexion</a>
     </div>
 </nav> 
 
@@ -182,6 +175,8 @@
 <footer>
     © 2025-2026 <span>TrafficFlow</span> · IUT de Douala · Groupe 23
 </footer>
+
+<script src="cookie-consent.js"></script>
 
 <script>
 let posts = [
@@ -332,7 +327,11 @@ function envoyerFlowComm() {
     }, 700)
 }
 
-afficherPosts(posts)
+// Protection de la page
+document.addEventListener('DOMContentLoaded', async () => {
+    await auth.protectRoute();
+    afficherPosts(posts)
+})
 </script>
 
 </body>

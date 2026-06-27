@@ -36,15 +36,12 @@
             text-align: center;
             font-weight: 600;
             cursor: pointer;
-            transition: all 0.3s;
         }
         .auth-tab.active {
             color: #C9A96E;
             border-bottom: 3px solid #C9A96E;
         }
-        .form-group {
-            margin-bottom: 20px;
-        }
+        .form-group { margin-bottom: 20px; }
         input {
             width: 100%;
             padding: 14px;
@@ -77,6 +74,7 @@
         .consent {
             margin: 20px 0;
             font-size: 14px;
+            line-height: 1.5;
         }
     </style>
 </head>
@@ -84,7 +82,7 @@
 
 <div class="auth-container">
     <div class="auth-card">
-        <h2 style="text-align:center; margin-bottom:10px;">Bienvenue sur TrafficFlow</h2>
+        <h2 style="text-align:center; margin-bottom:8px;">Bienvenue sur TrafficFlow</h2>
         <p style="text-align:center; color:#666; margin-bottom:30px;">Connectez-vous pour accéder à toutes les fonctionnalités</p>
 
         <!-- Tabs -->
@@ -107,14 +105,27 @@
         <!-- Formulaire Inscription -->
         <div id="register-form" style="display:none;">
             <div class="form-group">
-                <input type="text" id="register-nom" placeholder="Votre nom" required>
+                <input type="text" id="register-nom" placeholder="Votre nom complet" required>
             </div>
             <div class="form-group">
                 <input type="email" id="register-email" placeholder="Email" required>
             </div>
             <div class="form-group">
-                <input type="password" id="register-password" placeholder="Mot de passe" required>
+                <input type="password" id="register-password" placeholder="Mot de passe (min. 6 caractères)" required>
             </div>
+
+            <!-- Consentement -->
+            <div class="consent">
+                <input type="checkbox" id="consent-check" required>
+                <label for="consent-check">
+                    J’accepte la 
+                    <a href="politique-confidentialite.html" target="_blank">Politique de Confidentialité</a> 
+                    et les 
+                    <a href="cgu.html" target="_blank">Conditions Générales d’Utilisation</a> 
+                    de TrafficFlow.
+                </label>
+            </div>
+
             <button class="btn-primary" onclick="handleSignup()">Créer mon compte</button>
         </div>
 
@@ -123,14 +134,6 @@
             <p style="color:#888; margin-bottom:15px;">Ou continuer avec</p>
             <button class="social-btn" onclick="signInWithGoogle()">🌐 Continuer avec Google</button>
             <button class="social-btn" onclick="signInWithApple()"> Continuer avec Apple</button>
-        </div>
-
-        <!-- Consentement -->
-        <div class="consent">
-            <input type="checkbox" id="consent-check" required>
-            <label for="consent-check">
-                J’accepte la <a href="#">Politique de Confidentialité</a> et les <a href="#">Conditions Générales</a>
-            </label>
         </div>
     </div>
 </div>
@@ -151,15 +154,9 @@ document.getElementById('tab-register').addEventListener('click', () => {
     document.getElementById('tab-login').classList.remove('active');
 });
 
-// Connexion
 async function handleLogin() {
     const email = document.getElementById('login-email').value;
     const password = document.getElementById('login-password').value;
-
-    if (!document.getElementById('consent-check').checked) {
-        alert("Vous devez accepter les conditions pour continuer.");
-        return;
-    }
 
     const { error } = await auth.login(email, password);
     if (error) {
@@ -169,14 +166,13 @@ async function handleLogin() {
     }
 }
 
-// Inscription
 async function handleSignup() {
     const nom = document.getElementById('register-nom').value;
     const email = document.getElementById('register-email').value;
     const password = document.getElementById('register-password').value;
 
     if (!document.getElementById('consent-check').checked) {
-        alert("Vous devez accepter les conditions pour continuer.");
+        alert("Vous devez accepter la Politique de Confidentialité et les Conditions Générales.");
         return;
     }
 
@@ -189,15 +185,10 @@ async function handleSignup() {
     }
 }
 
-// TODO: Implémenter Google et Apple plus tard
-function signInWithGoogle() {
-    alert("Connexion Google sera disponible bientôt.");
-}
-
-function signInWithApple() {
-    alert("Connexion Apple sera disponible bientôt.");
-}
+function signInWithGoogle() { alert("Fonctionnalité Google bientôt disponible."); }
+function signInWithApple() { alert("Fonctionnalité Apple bientôt disponible."); }
 </script>
+<script src="cookie-consent.js"></script>
 
 </body>
 </html>

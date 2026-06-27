@@ -10,7 +10,7 @@
     <title>TrafficFlow – Trafic intelligent à Douala</title>
     <meta name="description" content="TrafficFlow, la première plateforme intelligente d'analyse du trafic urbain à Douala. Naviguez mieux, plus vite.">
 
-    <!-- === PWA Configuration === -->
+    <!-- PWA Configuration -->
     <meta name="theme-color" content="#f5c518">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
@@ -19,7 +19,6 @@
     <link rel="manifest" href="/manifest.json">
     <link rel="icon" href="/icons/icon-192.png">
     <link rel="apple-touch-icon" href="/icons/icon-192.png">
-    <link rel="apple-touch-icon" href="/icons/icon-192x192.png">
 
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="leaflet.css">
@@ -124,13 +123,11 @@
             letter-spacing: 1px;
             margin-top: 4px;
         }
-        /* MINI CARTE */
         .mini-map-section {
             background: #F7F7F7;
             padding: 0;
         }
         #miniMap { height: 300px; width: 100%; }
-        /* TRAFIC STATUS */
         .status-section {
             background: #FFFFFF;
             border-bottom: 1px solid #E0E0E0;
@@ -166,7 +163,6 @@
         }
         .status-name { font-size: 13px; font-weight: 600; color: #1A0A00; }
         .status-level { font-size: 11px; color: #999; }
-        /* FONCTIONNALITÉS */
         .features-section {
             padding: 72px 48px;
             background: #FFFFFF;
@@ -204,7 +200,6 @@
         .feature-icon { font-size: 32px; margin-bottom: 16px; }
         .feature-title { font-size: 16px; font-weight: 700; margin-bottom: 8px; color: #1A0A00; }
         .feature-desc { font-size: 14px; color: #666; line-height: 1.6; }
-        /* INFO STRIP SOMBRE */
         .info-strip {
             display: flex;
             background: #1A0A00;
@@ -224,7 +219,6 @@
         }
         .info-val { font-size: 32px; font-weight: 800; color: #FFFFFF; }
         .info-sub { font-size: 13px; color: #666; margin-top: 6px; }
-        /* REALTIME BADGE */
         .realtime-badge {
             display: inline-flex;
             align-items: center;
@@ -244,7 +238,6 @@
             background: #1A6640;
             animation: pulse 1.5s infinite;
         }
-        /* FLOW BAR */
         .flow-bar {
             display: flex;
             align-items: center;
@@ -268,7 +261,6 @@
             flex-shrink: 0;
         }
         .flow-bubble { font-size: 15px; color: #333; }
-        /* RESPONSIVE */
         @media(max-width: 768px) {
             .hero-section { padding: 48px 20px; }
             .hero-title { font-size: 32px; }
@@ -283,261 +275,215 @@
 </head>
 <body>
 
-    <!-- Loading Screen pendant vérification d'authentification -->
-    <div id="auth-loading" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #1A0A00; display: flex; align-items: center; justify-content: center; z-index: 9999; flex-direction: column; color: white;">
+    <!-- Loading Screen -->
+    <div id="auth-loading" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #1A0A00; z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; color: white;">
         <div style="font-size: 24px; margin-bottom: 20px;">Vérification de votre session...</div>
         <div style="width: 50px; height: 50px; border: 4px solid #C9A96E; border-top-color: transparent; border-radius: 50%; animation: spin 1s linear infinite;"></div>
     </div>
 
-<nav class="navbar">
-    <div class="nav-logo">TRAFFICFLOW</div>
-    <div class="nav-links">
-        <a href="index.html" class="nav-link active">Accueil</a>
-        <a href="map.html" class="nav-link">Carte</a>
-        <a href="dashboard.html" class="nav-link">Dashboard</a>
-        <a href="statistiques.html" class="nav-link">Statistiques</a>
-        <a href="communaute.html" class="nav-link">Communauté</a>
-    </div>
-</nav>
+    <nav class="navbar">
+        <div class="nav-logo">TRAFFICFLOW</div>
+        <div class="nav-links">
+            <a href="index.html" class="nav-link active">Accueil</a>
+            <a href="map.html" class="nav-link">Carte</a>
+            <a href="statistiques.html" class="nav-link">Statistiques</a>
+            <a href="communaute.html" class="nav-link">Communauté</a>
+        </div>
+    </nav>
 
-<!-- HERO -->
-<section class="hero-section">
-    <div class="hero-content">
-        <div class="realtime-badge">
-            <div class="realtime-dot"></div>
-            EN DIRECT — DOUALA
-        </div>
-        <div class="hero-badge">PREMIÈRE APP INTELLIGENTE DE TRAFIC</div>
-        <h1 class="hero-title">Navigue avec <span>intelligence</span> dans Douala</h1>
-        <p class="hero-sub">FLOW analyse le trafic en temps réel, prédit les embouteillages et optimise vos itinéraires pour vous faire gagner du temps chaque jour.</p>
-        <div class="hero-cta">
-            <a href="map.html" class="btn-hero-primary">🗺 Voir la carte</a>
-            <a href="connexion.html" class="btn-hero-secondary">Créer un compte</a>
-        </div>
-        <div class="hero-stats">
-            <div>
-                <div class="hero-stat-val">12</div>
-                <div class="hero-stat-label">AXES SURVEILLÉS</div>
+    <!-- HERO -->
+    <section class="hero-section">
+        <div class="hero-content">
+            <div class="realtime-badge">
+                <div class="realtime-dot"></div>
+                EN DIRECT — DOUALA
             </div>
-            <div>
-                <div class="hero-stat-val">247</div>
-                <div class="hero-stat-label">UTILISATEURS ACTIFS</div>
+            <div class="hero-badge">PREMIÈRE APP INTELLIGENTE DE TRAFIC</div>
+            <h1 class="hero-title">Navigue avec <span>intelligence</span> dans Douala</h1>
+            <p class="hero-sub">FLOW analyse le trafic en temps réel, prédit les embouteillages et optimise vos itinéraires pour vous faire gagner du temps chaque jour.</p>
+            <div class="hero-cta">
+                <a href="map.html" class="btn-hero-primary">🗺 Voir la carte</a>
             </div>
-            <div>
-                <div class="hero-stat-val">18 min</div>
-                <div class="hero-stat-label">ÉCONOMISÉES/JOUR</div>
+            <div class="hero-stats">
+                <div>
+                    <div class="hero-stat-val">12</div>
+                    <div class="hero-stat-label">AXES SURVEILLÉS</div>
+                </div>
+                <div>
+                    <div class="hero-stat-val">247</div>
+                    <div class="hero-stat-label">UTILISATEURS ACTIFS</div>
+                </div>
+                <div>
+                    <div class="hero-stat-val">18 min</div>
+                    <div class="hero-stat-label">ÉCONOMISÉES/JOUR</div>
+                </div>
             </div>
         </div>
+    </section>
+
+    <!-- STATUS TRAFIC -->
+    <section class="status-section">
+        <div class="status-scroll" id="statusScroll">
+            <div class="status-item">
+                <div class="status-dot green"></div>
+                <div><div class="status-name">Akwa</div><div class="status-level">Fluide</div></div>
+            </div>
+            <div class="status-item">
+                <div class="status-dot green"></div>
+                <div><div class="status-name">Bonanjo</div><div class="status-level">Fluide</div></div>
+            </div>
+            <div class="status-item">
+                <div class="status-dot red"></div>
+                <div><div class="status-name">Deido</div><div class="status-level">Bloqué</div></div>
+            </div>
+            <div class="status-item">
+                <div class="status-dot amber"></div>
+                <div><div class="status-name">Ndokotti</div><div class="status-level">Modéré</div></div>
+            </div>
+            <div class="status-item">
+                <div class="status-dot amber"></div>
+                <div><div class="status-name">Bessengue</div><div class="status-level">Modéré</div></div>
+            </div>
+            <div class="status-item">
+                <div class="status-dot green"></div>
+                <div><div class="status-name">Logbassa</div><div class="status-level">Fluide</div></div>
+            </div>
+            <div class="status-item">
+                <div class="status-dot green"></div>
+                <div><div class="status-name">Bonapriso</div><div class="status-level">Fluide</div></div>
+            </div>
+            <div class="status-item">
+                <div class="status-dot amber"></div>
+                <div><div class="status-name">Makepe</div><div class="status-level">Modéré</div></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- MINI CARTE -->
+    <section class="mini-map-section">
+        <div id="miniMap"></div>
+    </section>
+
+    <!-- FONCTIONNALITÉS -->
+    <section class="features-section">
+        <div class="section-tag">POURQUOI TRAFFICFLOW</div>
+        <h2 class="section-title">Tout ce dont vous avez besoin</h2>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">🤖</div>
+                <div class="feature-title">FLOW — Assistant IA</div>
+                <div class="feature-desc">Posez vos questions sur le trafic à Douala. FLOW analyse et répond en temps réel avec des recommandations personnalisées.</div>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🗺</div>
+                <div class="feature-title">Carte Interactive</div>
+                <div class="feature-desc">Visualisez le trafic en direct sur les axes principaux de Douala. Planifiez vos itinéraires intelligemment.</div>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📊</div>
+                <div class="feature-title">Statistiques Avancées</div>
+                <div class="feature-desc">Analysez les tendances du trafic, les heures de pointe et les axes les plus chargés avec des graphiques détaillés.</div>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">👥</div>
+                <div class="feature-title">Communauté</div>
+                <div class="feature-desc">Partagez les incidents en temps réel avec la communauté. Signaux d'embouteillages, accidents, travaux.</div>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">📍</div>
+                <div class="feature-title">Géolocalisation</div>
+                <div class="feature-desc">Suivez votre position en temps réel et recevez des alertes automatiques sur les zones que vous traversez.</div>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🔔</div>
+                <div class="feature-title">Alertes Intelligentes</div>
+                <div class="feature-desc">Recevez des notifications avant les heures de pointe. Anticipez et planifiez vos déplacements à l'avance.</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- INFO STRIP -->
+    <section class="info-strip">
+        <div class="info-box">
+            <div class="info-lbl">ITINÉRAIRE OPTIMAL</div>
+            <div class="info-val">18 min</div>
+            <div class="info-sub">Akwa → Logbassa</div>
+        </div>
+        <div class="info-box">
+            <div class="info-lbl">PROCHAINE ALERTE</div>
+            <div class="info-val">17h30</div>
+            <div class="info-sub">Rond-point Deido</div>
+        </div>
+        <div class="info-box">
+            <div class="info-lbl">AXES SURVEILLÉS</div>
+            <div class="info-val">12</div>
+            <div class="info-sub">En temps réel</div>
+        </div>
+    </section>
+
+    <!-- FLOW BAR -->
+    <section class="flow-bar">
+        <div class="flow-avatar">FL</div>
+        <div class="flow-bubble">Bonjour ! Je suis <strong>FLOW</strong>. Comment puis-je t'aider à naviguer aujourd'hui ?</div>
+    </section>
+
+    <footer>
+        © 2025-2026 <span style="color:#C9A96E;">TrafficFlow</span> · IUT de Douala · Projet académique groupe 23
+    </footer>
+
+    <!-- FLOW FLOTTANT -->
+    <button class="flow-btn" onclick="toggleFlow()" aria-label="Ouvrir FLOW">FL</button>
+    <div class="flow-window" id="flowWindow">
+        <div class="flow-window-header">
+            <span class="flow-window-title">⬡ FLOW — Assistant IA</span>
+            <span class="flow-window-close" onclick="toggleFlow()">✕</span>
+        </div>
+        <div class="flow-window-messages" id="flowMessages">
+            <div class="flow-msg-bubble bot">
+                <div class="bubble">Bonjour ! Je suis FLOW. Posez-moi une question sur le trafic à Douala.</div>
+            </div>
+        </div>
+        <div class="flow-window-input">
+            <input type="text" id="flowInput" placeholder="Ex: Trafic à Ndokotti ?" onkeypress="if(event.key==='Enter') envoyerFlow()">
+            <button onclick="envoyerFlow()">Envoyer</button>
+        </div>
     </div>
-</section>
 
-<!-- STATUS TRAFIC -->
-<section class="status-section">
-    <div class="status-scroll" id="statusScroll">
-        <div class="status-item">
-            <div class="status-dot green"></div>
-            <div><div class="status-name">Akwa</div><div class="status-level">Fluide</div></div>
-        </div>
-        <div class="status-item">
-            <div class="status-dot green"></div>
-            <div><div class="status-name">Bonanjo</div><div class="status-level">Fluide</div></div>
-        </div>
-        <div class="status-item">
-            <div class="status-dot red"></div>
-            <div><div class="status-name">Deido</div><div class="status-level">Bloqué</div></div>
-        </div>
-        <div class="status-item">
-            <div class="status-dot amber"></div>
-            <div><div class="status-name">Ndokotti</div><div class="status-level">Modéré</div></div>
-        </div>
-        <div class="status-item">
-            <div class="status-dot amber"></div>
-            <div><div class="status-name">Bessengue</div><div class="status-level">Modéré</div></div>
-        </div>
-        <div class="status-item">
-            <div class="status-dot green"></div>
-            <div><div class="status-name">Logbassa</div><div class="status-level">Fluide</div></div>
-        </div>
-        <div class="status-item">
-            <div class="status-dot green"></div>
-            <div><div class="status-name">Bonapriso</div><div class="status-level">Fluide</div></div>
-        </div>
-        <div class="status-item">
-            <div class="status-dot amber"></div>
-            <div><div class="status-name">Makepe</div><div class="status-level">Modéré</div></div>
-        </div>
-    </div>
-</section>
+    <script src="leaflet.js"></script>
+    <script src="app.js"></script>
+    <script src="cookie-consent.js"></script>
 
-<!-- MINI CARTE -->
-<section class="mini-map-section">
-    <div id="miniMap"></div>
-</section>
+    <script>
+        // MINI CARTE
+        const miniMap = L.map('miniMap', { zoomControl: false, scrollWheelZoom: false }).setView([4.0511, 9.7085], 13);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(miniMap);
 
-<!-- FONCTIONNALITÉS -->
-<section class="features-section">
-    <div class="section-tag">POURQUOI TRAFFICFLOW</div>
-    <h2 class="section-title">Tout ce dont vous avez besoin</h2>
-    <div class="features-grid">
-        <div class="feature-card">
-            <div class="feature-icon">🤖</div>
-            <div class="feature-title">FLOW — Assistant IA</div>
-            <div class="feature-desc">Posez vos questions sur le trafic à Douala. FLOW analyse et répond en temps réel avec des recommandations personnalisées.</div>
-        </div>
-        <div class="feature-card">
-            <div class="feature-icon">🗺</div>
-            <div class="feature-title">Carte Interactive</div>
-            <div class="feature-desc">Visualisez le trafic en direct sur les axes principaux de Douala. Planifiez vos itinéraires intelligemment.</div>
-        </div>
-        <div class="feature-card">
-            <div class="feature-icon">📊</div>
-            <div class="feature-title">Statistiques Avancées</div>
-            <div class="feature-desc">Analysez les tendances du trafic, les heures de pointe et les axes les plus chargés avec des graphiques détaillés.</div>
-        </div>
-        <div class="feature-card">
-            <div class="feature-icon">👥</div>
-            <div class="feature-title">Communauté</div>
-            <div class="feature-desc">Partagez les incidents en temps réel avec la communauté. Signaux d'embouteillages, accidents, travaux.</div>
-        </div>
-        <div class="feature-card">
-            <div class="feature-icon">📍</div>
-            <div class="feature-title">Géolocalisation</div>
-            <div class="feature-desc">Suivez votre position en temps réel et recevez des alertes automatiques sur les zones que vous traversez.</div>
-        </div>
-        <div class="feature-card">
-            <div class="feature-icon">🔔</div>
-            <div class="feature-title">Alertes Intelligentes</div>
-            <div class="feature-desc">Recevez des notifications avant les heures de pointe. Anticipez et planifiez vos déplacements à l'avance.</div>
-        </div>
-    </div>
-</section>
-
-<!-- INFO STRIP -->
-<section class="info-strip">
-    <div class="info-box">
-        <div class="info-lbl">ITINÉRAIRE OPTIMAL</div>
-        <div class="info-val">18 min</div>
-        <div class="info-sub">Akwa → Logbassa</div>
-    </div>
-    <div class="info-box">
-        <div class="info-lbl">PROCHAINE ALERTE</div>
-        <div class="info-val">17h30</div>
-        <div class="info-sub">Rond-point Deido</div>
-    </div>
-    <div class="info-box">
-        <div class="info-lbl">AXES SURVEILLÉS</div>
-        <div class="info-val">12</div>
-        <div class="info-sub">En temps réel</div>
-    </div>
-</section>
-
-<!-- FLOW BAR -->
-<section class="flow-bar">
-    <div class="flow-avatar">FL</div>
-    <div class="flow-bubble">Bonjour ! Je suis <strong>FLOW</strong>. Comment puis-je t'aider à naviguer aujourd'hui ?</div>
-</section>
-
-<footer>
-    © 2025-2026 <span style="color:#C9A96E;">TrafficFlow</span> · IUT de Douala · Projet académique groupe 23
-</footer>
-
-<!-- FLOW FLOTTANT -->
-<button class="flow-btn" onclick="toggleFlow()" aria-label="Ouvrir FLOW">FL</button>
-<div class="flow-window" id="flowWindow">
-    <div class="flow-window-header">
-        <span class="flow-window-title">⬡ FLOW — Assistant IA</span>
-        <span class="flow-window-close" onclick="toggleFlow()">✕</span>
-    </div>
-    <div class="flow-window-messages" id="flowMessages">
-        <div class="flow-msg-bubble bot">
-            <div class="bubble">Bonjour ! Je suis FLOW. Posez-moi une question sur le trafic à Douala.</div>
-        </div>
-    </div>
-    <div class="flow-window-input">
-        <input type="text" id="flowInput" placeholder="Ex: Trafic à Ndokotti ?" onkeypress="if(event.key==='Enter') envoyerFlow()">
-        <button onclick="envoyerFlow()">Envoyer</button>
-    </div>
-</div>
-
-<script src="leaflet.js"></script>
-<script src="app.js"></script>
-
-<script>
-// MINI CARTE DOUALA
-const miniMap = L.map('miniMap', { zoomControl: false, scrollWheelZoom: false }).setView([4.0511, 9.7085], 13)
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(miniMap)
-
-const zones = [
-    { lat: 4.0511, lng: 9.7085, nom: 'Akwa', niveau: 'green' },
-    { lat: 4.0450, lng: 9.7020, nom: 'Bonanjo', niveau: 'green' },
-    { lat: 4.0620, lng: 9.7150, nom: 'Deido', niveau: 'red' },
-    { lat: 4.0750, lng: 9.7200, nom: 'Ndokotti', niveau: 'amber' },
-    { lat: 4.0480, lng: 9.7120, nom: 'Bessengue', niveau: 'amber' },
-    { lat: 4.0350, lng: 9.7300, nom: 'Logbassa', niveau: 'green' }
-]
-
-const couleurs = { green: '#1A6640', amber: '#8B6400', red: '#A00000' }
-
-zones.forEach(z => {
-    L.circleMarker([z.lat, z.lng], {
-        radius: 10,
-        fillColor: couleurs[z.niveau],
-        color: '#1A0A00',
-        weight: 2,
-        fillOpacity: 0.9
-    }).addTo(miniMap).bindPopup(`<strong>${z.nom}</strong>`)
-})
-
-// MISE À JOUR TEMPS RÉEL
-function updateTime() {
-    const badge = document.querySelector('.realtime-badge')
-    if(badge) {
-        const now = new Date()
-        badge.innerHTML = `<div class="realtime-dot"></div> EN DIRECT — ${now.getHours()}h${String(now.getMinutes()).padStart(2,'0')}`
-    }
-}
-setInterval(updateTime, 60000)
-updateTime()
-</script>
-
-<script>
-// === LOGIQUE INTELLIGENTE D'AUTHENTIFICATION ===
-document.addEventListener('DOMContentLoaded', async () => {
-    const loading = document.getElementById('auth-loading');
-
-    try {
-        const user = await auth.getCurrentUser();
-
-        if (user) {
-            console.log("✅ Utilisateur connecté → redirection vers dashboard");
-            window.location.href = 'dashboard.html';
-        } else {
-            console.log("🔑 Nouvel utilisateur → page connexion");
-            window.location.href = 'connexion.html';
-        }
-    } catch (error) {
-        console.error("Erreur lors de la vérification :", error);
-        window.location.href = 'connexion.html';
-    } finally {
-        loading.style.display = 'none';
-    }
-});
-</script>
-
-<!-- === Enregistrement du Service Worker === -->
-<script>
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('/sw.js')
-        .then(reg => {
-          console.log('✅ Service Worker enregistré avec succès !', reg);
-        })
-        .catch(err => {
-          console.error('❌ Erreur Service Worker :', err);
+        // Logique intelligente d'authentification
+        document.addEventListener('DOMContentLoaded', async () => {
+            const loading = document.getElementById('auth-loading');
+            try {
+                const user = await auth.getCurrentUser();
+                if (user) {
+                    console.log
+                    window.location.href = 'statistiques.html';
+                } else {
+                    window.location.href = 'connexion.html';
+                }
+            } catch (error) {
+                window.location.href = 'connexion.html';
+            } finally {
+                loading.style.display = 'none';
+            }
         });
-    });
-  }
-</script>
+    </script>
 
+    <!-- Service Worker -->
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js');
+        });
+      }
+    </script>
 </body>
 </html>
